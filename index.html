@@ -7,21 +7,55 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
-
-  <!--
-    Redoc doesn't change outer page styles
-    -->
   <style>
     body {
       margin: 0;
       padding: 0;
     }
+
+    .logo-container {
+      padding: 5px;
+      height: 50px;
+      width: 100%;
+      background-color: #FFF !important;
+      z-index: 100;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      border: 1px solid #EEEEEE;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .logo-container img {
+      height: 40px;
+    }
+
+    .fixed-placeholder {
+      height: 50px;
+    }
+
+    #redoc-container {
+      height: calc(100vh - 50px);
+    }
   </style>
 </head>
 
 <body>
-  <redoc spec-url='swagger.json'></redoc>
+  <div class="logo-container">
+    <img alt="Meta hOS APIs" src="MetahOSLogo.png" />
+  </div>
+  <div class="fixed-placeholder"> </div>
+  <div id="redoc-container" />
   <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"> </script>
+  <script>
+    Redoc.init('swagger.json', {
+      scrollYOffset: 60
+    }, document.getElementById('redoc-container'))
+  </script>
 </body>
 
 </html>
