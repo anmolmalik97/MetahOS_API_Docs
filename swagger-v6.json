@@ -1,0 +1,1213 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MetahOS API",
+    "description": "MetahOS API",
+    "contact": {
+      "email": "contact@m16labs.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+      {
+      "url": "https://staging.metahos.com/api/external/webhook",
+      "description": "MetahOS BaseUrl"
+    }
+  ],
+  "paths": {
+    "/doctor/list": {
+      "get": {
+        "tags": [
+          "Doctor"
+        ],
+        "summary": "Fetch doctors list",
+        "description": "Use to fetch doctors list in paginated format.",
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "pass an optional search string for looking up doctor",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "description": "pass an optional search string for looking up doctors accourding to department",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "description": "page number to fetch from according to limit.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "maximum number of records to return",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "paginatation object containing doctors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/list"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    },
+    "/doctor/create": {
+      "post": {
+        "tags": [
+          "Doctor"
+        ],
+        "summary": "Create a new doctor",
+        "operationId": "create",
+        "requestBody": {
+          "description": "Name and mobile number should be unique",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Doctor"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success true if success and if a doctor exists with same name or phone number returns false",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/doctor/update": {
+      "post": {
+        "tags": [
+          "Doctor"
+        ],
+        "summary": "Updates an existing doctor",
+        "operationId": "update",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateDoctor"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success true if success and if a doctor exists with same name or phone number returns false",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/create": {
+      "post": {
+        "tags": [
+          "Patient"
+        ],
+        "summary": "Create a new patient",
+        "operationId": "patient/create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Patient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/update": {
+      "post": {
+        "tags": [
+          "Patient"
+        ],
+        "summary": "Updates an existing patient",
+        "operationId": "patient/update",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updatePatient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/getAvailableSlots": {
+      "post": {
+        "tags": [
+          "Slot"
+        ],
+        "summary": "Fetch available time slots of an entity.",
+        "operationId": "getAvailableSlots",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/getAvailableSlots"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successfully fetched slots and returns list of slots"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Patient": {
+        "required": [
+          "dob",
+          "fName",
+          "gender",
+          "mobile"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fName": {
+            "type": "string"
+          },
+          "lName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "permanentAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "temporaryAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "household": {
+            "$ref": "#/components/schemas/Patient_household"
+          },
+          "kyc": {
+            "$ref": "#/components/schemas/Patient_kyc"
+          },
+          "kycFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "insurance": {
+            "$ref": "#/components/schemas/Patient_insurance"
+          },
+          "careGiver": {
+            "$ref": "#/components/schemas/Patient_careGiver"
+          },
+          "otherFieldValues": {
+            "$ref": "#/components/schemas/Patient_otherFieldValues"
+          },
+          "assigningAuthority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "historyFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workingDiagnosis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allergies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "history": {
+            "type": "string"
+          },
+          "familyHistory": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "upstringdBy": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "upstringdOn": {
+            "type": "string"
+          },
+          "uhid": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "balance": {
+            "type": "string"
+          },
+          "organisationName": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "isVip": {
+            "type": "boolean"
+          },
+          "deathstring": {
+            "type": "string"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "externalUhid": {
+            "type": "string"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "walletAmount": {
+            "type": "string"
+          },
+          "ipdType": {
+            "type": "string"
+          },
+          "vaccines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Patient_vaccines"
+            }
+          },
+          "partnerOrganization": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activityReviews": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "example": {
+          "fName": "Demo",
+          "lName": "Srj-test",
+          "gender": "Male",
+          "dob": "2000-01-26T13:59:56.540Z",
+          "maritalStatus": "Single",
+          "fatherName": "srj",
+          "motherName": "srj",
+          "mobile": "1212121212",
+          "email": "demo@demo.com",
+          "kycFiles": [
+            "https://myteleopd.s3.ap-south-1.amazonaws.com/download-1640527197215.png"
+          ],
+          "historyFiles": [],
+          "workingDiagnosis": [],
+          "allergies": [],
+          "balance": 0,
+          "permanentAddress": {
+            "street": "3934  Oakdale Avenue",
+            "zip": "110001",
+            "city": "Baroda House",
+            "state": "DELHI"
+          },
+          "temporaryAddress": {
+            "street": "3934  Oakdale Avenue",
+            "zip": "110001",
+            "city": "Baroda House",
+            "state": "DELHI"
+          },
+          "otherFieldValues": {
+            "Member Type": "hey demo"
+          },
+          "preferredLanguage": "Hindi",
+          "education": "HS Diploma/GED/Other secondary education",
+          "household": {
+            "size": "2",
+            "income": "200000-300000"
+          },
+          "employmentStatus": "Self-employed",
+          "kyc": {
+            "type": "Aadhaar",
+            "id": "1212121212"
+          },
+          "insurance": {
+            "company": "srj",
+            "policyNo": "1",
+            "effectiveDate": "2021-12-25T18:30:00.000Z"
+          },
+          "careGiver": {
+            "name": "srj",
+            "relationship": "friend",
+            "mobile": "1234323432"
+          },
+          "assigningAuthority": "ObjectId(\"60b9bc21fa286c11b6314ec8\")",
+          "employeeId": "s123",
+          "createdBy": "m16labsadmin",
+          "createdOn": "2021-12-26T13:59:57.426Z",
+          "uhid": "MH-2154162",
+          "vaccines": [],
+          "fullName": "Demo Srj-test"
+        }
+      },
+      "updatePatient": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fName": {
+            "type": "string"
+          },
+          "lName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "permanentAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "temporaryAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "household": {
+            "$ref": "#/components/schemas/Patient_household"
+          },
+          "kyc": {
+            "$ref": "#/components/schemas/Patient_kyc"
+          },
+          "kycFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "insurance": {
+            "$ref": "#/components/schemas/Patient_insurance"
+          },
+          "careGiver": {
+            "$ref": "#/components/schemas/Patient_careGiver"
+          },
+          "otherFieldValues": {
+            "$ref": "#/components/schemas/Patient_otherFieldValues"
+          },
+          "assigningAuthority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "historyFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workingDiagnosis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allergies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "history": {
+            "type": "string"
+          },
+          "familyHistory": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "upstringdBy": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "upstringdOn": {
+            "type": "string"
+          },
+          "uhid": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "balance": {
+            "type": "string"
+          },
+          "organisationName": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "isVip": {
+            "type": "boolean"
+          },
+          "deathstring": {
+            "type": "string"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "externalUhid": {
+            "type": "string"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "walletAmount": {
+            "type": "string"
+          },
+          "ipdType": {
+            "type": "string"
+          },
+          "vaccines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Patient_vaccines"
+            }
+          },
+          "partnerOrganization": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activityReviews": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "example": {
+          "_id": "ObjectId(\"61c8755dabf75e188aed4f07\")",
+          "fName": "Demo-edited",
+          "lName": "Srj-test-edited",
+          "gender": "Male",
+          "dob": "2000-01-26T13:59:56.540Z",
+          "maritalStatus": "Single",
+          "fatherName": "srj-edited",
+          "motherName": "srj-edited",
+          "mobile": "1212121212",
+          "email": "demo@demo.com",
+          "permanentAddress": {
+            "street": "3934  Oakdale Avenue",
+            "zip": "110001",
+            "city": "Baroda House",
+            "state": "DELHI"
+          },
+          "temporaryAddress": {
+            "street": "3934  Oakdale Avenue",
+            "zip": "110001",
+            "city": "Baroda House",
+            "state": "DELHI"
+          },
+          "otherFieldValues": {
+            "Member Type": "hey demo"
+          },
+          "preferredLanguage": "Hindi",
+          "education": "HS Diploma/GED/Other secondary education",
+          "household": {
+            "size": "2",
+            "income": "200000-300000"
+          },
+          "employmentStatus": "Self-employed",
+          "kyc": {
+            "type": "Aadhaar",
+            "id": "1212121212"
+          },
+          "insurance": {
+            "company": "srj",
+            "policyNo": "1",
+            "effectiveDate": "2021-12-25T18:30:00.000Z"
+          },
+          "careGiver": {
+            "name": "srj",
+            "relationship": "friend",
+            "mobile": "1234323432"
+          },
+          "assigningAuthority": "ObjectId(\"60b9bc21fa286c11b6314ec8\")",
+          "employeeId": "s123",
+          "createdBy": "m16labsadmin",
+          "createdOn": "2021-12-26T13:59:57.426Z",
+          "uhid": "MH-2154162",
+          "fullName": "Demo Srj-test-edited"
+        },
+        "xml": {
+          "name": "Patient"
+        }
+      },
+      "list": {
+        "type": "object",
+        "properties": {
+          "doctors": {
+            "type": "array",
+            "description": "array containin objects of type doctor.",
+            "items": {
+              "$ref": "#/components/schemas/Doctor"
+            }
+          },
+          "totalCount": {
+            "type": "number",
+            "description": "total number of records"
+          }
+        }
+      },
+      "Doctor": {
+        "type": "object",
+        "properties": {
+          "Name": {
+            "type": "string"
+          },
+          "Department": {
+            "type": "string"
+          },
+          "Designation": {
+            "type": "string"
+          },
+          "Unit": {
+            "type": "string"
+          },
+          "Qualification": {
+            "type": "string"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "Contact": {
+            "type": "number"
+          },
+          "Registration": {
+            "type": "string"
+          },
+          "Email": {
+            "type": "string"
+          },
+          "Password": {
+            "type": "string"
+          },
+          "ProfileURL": {
+            "type": "string",
+            "description": "input stream of the file",
+            "format": "binary"
+          },
+          "sign": {
+            "type": "string"
+          },
+          "consultationFee": {
+            "type": "number"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "Joining": {
+            "type": "string"
+          },
+          "ClinicName": {
+            "type": "string"
+          },
+          "Bio": {
+            "type": "string"
+          },
+          "Address": {
+            "type": "string"
+          },
+          "Speciality": {
+            "type": "string"
+          },
+          "DOB": {
+            "type": "string"
+          },
+          "hasChangedPassword": {
+            "type": "boolean"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "isVerified": {
+            "type": "boolean"
+          },
+          "otp": {
+            "$ref": "#/components/schemas/Doctor_otp"
+          },
+          "opdConfigv1": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ipdConfig": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "followupConsultations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_followupConsultations"
+            }
+          },
+          "medicineFrequencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_medicineFrequencies"
+            }
+          },
+          "medicineInstructions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_medicineInstructions"
+            }
+          },
+          "assigningAuthority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "monthlyctc": {
+            "type": "number"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "externalUnitId": {
+            "type": "string"
+          },
+          "externalDepartmentId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "Name": "Demo-doctor",
+          "Department": "Dermatology",
+          "Contact": 1234547890,
+          "Unit": "test",
+          "Email": "sharan.j@m16labs.com",
+          "Qualification": "mbbs",
+          "Description": "Testing description",
+          "DOB": "01-Jan-99",
+          "Joining": "21-Dec-21",
+          "disabled": false,
+          "isReferred": false,
+          "isVerified": true,
+          "Registration": "1",
+          "Password": "$2a$10$uKC0x6VPLPMIzQkC9n.M2.hWiLAejh3wrE4/XIRN.v8nj5AUl.fEy",
+          "ProfileURL": "",
+          "consultationFee": 1,
+          "followupConsultations": [],
+          "assigningAuthority": "ObjectId(\"60b9bc21fa286c11b6314ec8\")",
+          "medicineFrequencies": [],
+          "medicineInstructions": [],
+          "__v": 0
+        }
+      },
+      "updateDoctor": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Name": {
+            "type": "string"
+          },
+          "Department": {
+            "type": "string"
+          },
+          "Designation": {
+            "type": "string"
+          },
+          "Unit": {
+            "type": "string"
+          },
+          "Qualification": {
+            "type": "string"
+          },
+          "Description": {
+            "type": "string"
+          },
+          "Contact": {
+            "type": "number"
+          },
+          "Registration": {
+            "type": "string"
+          },
+          "Email": {
+            "type": "string"
+          },
+          "Password": {
+            "type": "string"
+          },
+          "ProfileURL": {
+            "type": "string",
+            "description": "input stream of the file",
+            "format": "binary"
+          },
+          "sign": {
+            "type": "string"
+          },
+          "consultationFee": {
+            "type": "number"
+          },
+          "disabled": {
+            "type": "boolean"
+          },
+          "Joining": {
+            "type": "string"
+          },
+          "ClinicName": {
+            "type": "string"
+          },
+          "Bio": {
+            "type": "string"
+          },
+          "Address": {
+            "type": "string"
+          },
+          "Speciality": {
+            "type": "string"
+          },
+          "DOB": {
+            "type": "string"
+          },
+          "hasChangedPassword": {
+            "type": "boolean"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "isVerified": {
+            "type": "boolean"
+          },
+          "otp": {
+            "$ref": "#/components/schemas/Doctor_otp"
+          },
+          "opdConfigv1": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ipdConfig": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "followupConsultations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_followupConsultations"
+            }
+          },
+          "medicineFrequencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_medicineFrequencies"
+            }
+          },
+          "medicineInstructions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_medicineInstructions"
+            }
+          },
+          "assigningAuthority": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "monthlyctc": {
+            "type": "number"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "externalUnitId": {
+            "type": "string"
+          },
+          "externalDepartmentId": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "_id": "ObjectId(\"61c879b6abf75e188aed4f09\")",
+          "Name": "Demo-doctor-edited",
+          "Department": "Dermatology",
+          "Unit": "test-edited",
+          "Qualification": "mbbs",
+          "Description": "Testing description updated"
+        },
+        "xml": {
+          "name": "Doctor"
+        }
+      },
+      "getAvailableSlots": {
+        "required": [
+          "conId",
+          "forDate",
+          "identifier",
+          "slotType",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "619f7dd4b74e9f43f2f389de"
+          },
+          "type": {
+            "type": "string",
+            "example": "entity"
+          },
+          "forDate": {
+            "type": "string",
+            "format": "date iso string",
+            "example": "2021-12-26T11:10:10.010Z"
+          },
+          "conId": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "619f7dd4b74e9f43f2f389de"
+          },
+          "slotType": {
+            "type": "string",
+            "example": "slot"
+          }
+        }
+      },
+      "Patient_permanentAddress": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_household": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "string"
+          },
+          "income": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_kyc": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_insurance": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string"
+          },
+          "policyNo": {
+            "type": "string"
+          },
+          "effectivedate": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_careGiver": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_otherFieldValues": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "Patient_vaccines": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "doseNo": {
+            "type": "string"
+          },
+          "prevents": {
+            "type": "string"
+          },
+          "duestring": {
+            "type": "string"
+          },
+          "givenOn": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "string"
+          },
+          "doseAdministered": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "lotNo": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          }
+        }
+      },
+      "Doctor_otp": {
+        "type": "object",
+        "properties": {
+          "gen": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "Doctor_followupConsultations": {
+        "type": "object",
+        "properties": {
+          "numberOfDays": {
+            "type": "number"
+          },
+          "fee": {
+            "type": "number"
+          }
+        }
+      },
+      "Doctor_medicineFrequencies": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "count": {
+            "type": "number"
+          }
+        }
+      },
+      "Doctor_medicineInstructions": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "abbreviation": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
