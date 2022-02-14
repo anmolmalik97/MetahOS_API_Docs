@@ -244,6 +244,40 @@
         }
       }
     },
+    "/patient/uploadFiles": {
+      "post": {
+        "tags": [
+          "Patient"
+        ],
+        "summary": "Upload Files to Patient Journeys",
+        "operationId": "patient/uploadfiles",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/uploadPatientFile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/getAvailableSlots": {
       "post": {
         "tags": [
@@ -466,6 +500,31 @@
           "totalCount": {
             "type": "number",
             "description": "total number of records"
+          }
+        }
+      },
+      "uploadPatientFile":{
+        "type": "object",
+        "required": ["patient_files","reportType","patientId","date"],
+        "properties":{
+          "patient_files":{
+            "type": "string",
+            "description": "input stream of the file",
+            "format": "binary"
+          },
+          "reportType":{
+            "type":"string",
+            "description": ""
+          },
+          "patientId": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "date": {
+            "type": "string",
+            "format": "Date ISO String",
+            "example": "2021-12-26T11:10:10.010Z"
           }
         }
       },
@@ -799,7 +858,7 @@
           },
           "forDate": {
             "type": "string",
-            "format": "date iso string",
+            "format": "Date ISO String",
             "example": "2021-12-26T11:10:10.010Z"
           },
           "conId": {
