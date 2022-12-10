@@ -329,56 +329,15 @@
           "200": {
             "description": "Returns patient list and count if success",
             "content": {
-              "application/json": [
-                {
-                  "patient": {
-                    "permanentAddress": {
-                      "street": "",
-                      "zip": "123456",
-                      "city": "Demo",
-                      "state": "Demo"
-                    },
-                    "kycFiles": [],
-                    "historyFiles": [],
-                    "workingDiagnosis": [],
-                    "allergies": [],
-                    "balance": 0,
-                    "oldPatientId": [],
-                    "mergedFields": [],
-                    "disablePatient": false,
-                    "activityReviews": [],
-                    "tags": [],
-                    "clinicalTags": [],
-                    "registeredAuthorities": "Demo_123",
-                    "initialRegisteredAuthorities": [],
-                    "_id": "Demo_567",
-                    "fName": "Demo",
-                    "lName": "Demo",
-                    "gender": "Male",
-                    "dob": "2001-09-07T10:23:59.010Z",
-                    "maritalStatus": "Single",
-                    "fatherName": "Demo",
-                    "mobile": "1234567890",
-                    "countryMobileCode": "91",
-                    "secondaryMobileCode": "",
-                    "assigningAuthority": {
-                      "_id": "Demo_123",
-                      "name": "Demo Hospital",
-                      "nationality": "Indian",
-                      "uhid": "MH-123",
-                      "createdBy": "Demo",
-                      "createdOn": "2022-12-07T10:23:59.378Z",
-                      "vaccines": [],
-                      "externalIds": [],
-                      "createdAt": "2022-12-07T10:23:59.454Z",
-                      "updatedAt": "2022-12-07T10:28:04.761Z",
-                      "fullName": "Demo",
-                      "isRegistrationDone": true
-                    }
-                  }
+              "application/json":{
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/getDetails"
                 }
-              ]
+              }
             }
+          }
           },
           "500": {
             "description": "Internal Server Error"
@@ -808,6 +767,62 @@
           "totalCount": {
             "type": "number",
             "description": "total number of records"
+          }
+        }
+      },
+      "getDetails": {
+        "type": "object",
+        "properties": {
+          "patients": {
+            "type": "array",
+            "description": "array containin objects of type patient.",
+            "items": {
+              "patient": {
+                "permanentAddress": {
+                  "street": "",
+                  "zip": "123456",
+                  "city": "Demo",
+                  "state": "Demo"
+                },
+                "kycFiles": [],
+                "historyFiles": [],
+                "workingDiagnosis": [],
+                "allergies": [],
+                "balance": 0,
+                "oldPatientId": [],
+                "mergedFields": [],
+                "disablePatient": false,
+                "activityReviews": [],
+                "tags": [],
+                "clinicalTags": [],
+                "registeredAuthorities": "Demo_123",
+                "initialRegisteredAuthorities": [],
+                "_id": "Demo_567",
+                "fName": "Demo",
+                "lName": "Demo",
+                "gender": "Male",
+                "dob": "2001-09-07T10:23:59.010Z",
+                "maritalStatus": "Single",
+                "fatherName": "Demo",
+                "mobile": "1234567890",
+                "countryMobileCode": "91",
+                "secondaryMobileCode": "",
+                "assigningAuthority": {
+                  "_id": "Demo_123",
+                  "name": "Demo Hospital",
+                  "nationality": "Indian",
+                  "uhid": "MH-123",
+                  "createdBy": "Demo",
+                  "createdOn": "2022-12-07T10:23:59.378Z",
+                  "vaccines": [],
+                  "externalIds": [],
+                  "createdAt": "2022-12-07T10:23:59.454Z",
+                  "updatedAt": "2022-12-07T10:28:04.761Z",
+                  "fullName": "Demo",
+                  "isRegistrationDone": true
+                }
+              }
+            }
           }
         }
       },
