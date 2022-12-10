@@ -328,7 +328,7 @@
         "responses": {
           "200": {
             "description": "Returns patient list and count if success",
-            "x-examples": {
+            "content": {
               "application/json": [
                 {
                   "patient": {
