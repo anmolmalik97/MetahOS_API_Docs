@@ -29,9 +29,7 @@
   "paths": {
     "/doctor/list": {
       "get": {
-        "tags": [
-          "Doctor"
-        ],
+        "tags": ["Doctor"],
         "summary": "Get a list of doctors",
         "description": "Get a list of details of all doctors. Optional filters like name, department, pageNo, limit can be applied.",
         "operationId": "list",
@@ -108,9 +106,7 @@
     },
     "/doctor/create": {
       "post": {
-        "tags": [
-          "Doctor"
-        ],
+        "tags": ["Doctor"],
         "summary": "Create a new doctor",
         "operationId": "create",
         "requestBody": {
@@ -143,9 +139,7 @@
     },
     "/doctor/update": {
       "post": {
-        "tags": [
-          "Doctor"
-        ],
+        "tags": ["Doctor"],
         "summary": "Update an existing doctor information",
         "operationId": "update",
         "requestBody": {
@@ -177,9 +171,7 @@
     },
     "/patient/create": {
       "post": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Create a new patient",
         "operationId": "patient/create",
         "requestBody": {
@@ -212,9 +204,7 @@
     },
     "/patient/update": {
       "post": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Updates an existing patient",
         "operationId": "patient/update",
         "requestBody": {
@@ -246,9 +236,7 @@
     },
     "/patient/uploadFiles": {
       "post": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Upload Files to Patient Journeys",
         "operationId": "patient/uploadfiles",
         "requestBody": {
@@ -280,9 +268,7 @@
     },
     "/getAvailableSlots": {
       "post": {
-        "tags": [
-          "Slot"
-        ],
+        "tags": ["Slot"],
         "summary": "Fetch available time slots of an entity (doctor, room, etc).",
         "operationId": "getAvailableSlots",
         "requestBody": {
@@ -306,9 +292,7 @@
     },
     "/patient": {
       "get": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Get the details of a patient",
         "description": "Get the details of patient matching the uhid provided.",
         "operationId": "get",
@@ -329,18 +313,59 @@
           "200": {
             "description": "Returns patient list and count if success",
             "content": {
-              "application/json":{
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Patient"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/external/webhook/spandan/ecg-data": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Upload ECG Data",
+        "description": "Upload ECG report for a patient using UHID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Patient"
+                "type": "object",
+                "properties": {
+                  "uhid": {
+                    "type": "string",
+                    "description": "Unique Health Identifier (UHID) of the patient.",
+                    "example": "MH-24162542"
+                  },
+                  "report": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "ECG report file.",
+                    "example": "2947757.png"
+                  }
                 }
               }
             }
           }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful upload of ECG data."
           },
-          "500": {
-            "description": "Internal Server Error"
+          "400": {
+            "description": "Bad request, invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized access."
           }
         }
       }
@@ -349,12 +374,7 @@
   "components": {
     "schemas": {
       "Patient": {
-        "required": [
-          "dob",
-          "fName",
-          "gender",
-          "mobile"
-        ],
+        "required": ["dob", "fName", "gender", "mobile"],
         "type": "object",
         "properties": {
           "fName": {
@@ -577,9 +597,7 @@
         "description": "Should be Stringified JSON"
       },
       "updatePatient": {
-        "required": [
-          "patientId"
-        ],
+        "required": ["patientId"],
         "type": "object",
         "properties": {
           "fName": {
@@ -826,17 +844,17 @@
           }
         }
       },
-      "uploadPatientFile":{
+      "uploadPatientFile": {
         "type": "object",
-        "required": ["patient_files","reportType","patientId","date"],
-        "properties":{
-          "patient_files":{
+        "required": ["patient_files", "reportType", "patientId", "date"],
+        "properties": {
+          "patient_files": {
             "type": "string",
             "description": "input stream of the file",
             "format": "binary"
           },
-          "reportType":{
-            "type":"string",
+          "reportType": {
+            "type": "string",
             "description": ""
           },
           "patientId": {
@@ -1068,9 +1086,7 @@
         }
       },
       "updateDoctor": {
-        "required": [
-          "doctorId"
-        ],
+        "required": ["doctorId"],
         "type": "object",
         "properties": {
           "doctorId": {
@@ -1161,13 +1177,7 @@
         }
       },
       "getAvailableSlots": {
-        "required": [
-          "conId",
-          "forDate",
-          "identifier",
-          "slotType",
-          "type"
-        ],
+        "required": ["conId", "forDate", "identifier", "slotType", "type"],
         "type": "object",
         "properties": {
           "identifier": {
