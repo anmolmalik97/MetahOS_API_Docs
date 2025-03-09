@@ -1,0 +1,1835 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MetahOS API",
+    "description": "# Overview\nMetahOS API lets you interact with the MetahOS platform. In the following APIs the BaseUrl refers to the Platform-Url\n\nFor Example: demo.metahos.com/api/external/webhook\n\nHere \"demo\" will be replaced by your platform subdomain\n# Authentication\nMetahOS API expects an username, and password. All MetahOS API calls are executed in an account's context.\n",
+    "contact": {
+      "email": "contact@m16labs.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0",
+    "x-logo": {
+      "url": "https://m16labs.com/wp-content/uploads/2021/01/m16labs-logo.jpg",
+      "altText": "M16labs-logo"
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "baseUrl",
+      "description": "MetahOS APIs"
+    }
+  ],
+  "paths": {
+    "/camps/create": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Create a new camp",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Camp" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Camp created successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "123e4567-e89b-12d3-a456-426614174000",
+                  "name": "Health Camp",
+                  "type": "Medical",
+                  "externalCampId": "HC-001",
+                  "villageName": "Example Village",
+                  "createdBy": {
+                    "name": "Admin User",
+                    "userId": "507f191e810c19729de860ea",
+                    "userType": "Admin"
+                  },
+                  "createdAt": "2024-03-09T12:00:00Z"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Camp already exists.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Camp with camp name 'Health Camp' already exists."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camps/screening/create": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Create a new screening",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CampScreening" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Screening created successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Screening created successfully."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Database connection failed."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camps/screening/list": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Get paginated list of screenings",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "pageNo", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of screenings with pagination.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "screenings": [
+                    {
+                      "id": "1a2b3c",
+                      "campId": "5678",
+                      "patientId": "91011",
+                      "type": "Initial Checkup",
+                      "status": "Completed"
+                    }
+                  ],
+                  "count": 1
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camps/leads/list": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Get list of leads",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dueFilter": { "type": "string" },
+                  "selectedCamp": { "type": "string" },
+                  "assigningAuthority": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          { "name": "pageNo", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "sortKey", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["asc", "desc"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of leads with pagination.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "leads": [
+                    {
+                      "id": "lead-001",
+                      "callFrom": "John Doe",
+                      "callType": "Follow-up",
+                      "status": "Pending",
+                      "assigningAuthority": "Clinic A",
+                      "patientId": "patient-123",
+                      "created": "2024-03-09T08:30:00Z"
+                    }
+                  ],
+                  "count": 1
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Failed to fetch leads."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/doctor/list": {
+      "get": {
+        "tags": ["Doctor"],
+        "summary": "Get a list of doctors",
+        "description": "Get a list of details of all doctors. Optional filters like name, department, pageNo, limit can be applied.",
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Doctor Name (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "description": "Doctor Department (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "description": "Page Number (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum Limit (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with all doctor details.",
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/list"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    },
+    "/doctor/create": {
+      "post": {
+        "tags": ["Doctor"],
+        "summary": "Create a new doctor",
+        "operationId": "create",
+        "requestBody": {
+          "description": "Name and mobile number should be unique",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Doctor"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success true if success and if a doctor exists with same name or phone number returns false",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/doctor/update": {
+      "post": {
+        "tags": ["Doctor"],
+        "summary": "Update an existing doctor information",
+        "operationId": "update",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/updateDoctor"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success true if success and if a doctor exists with same name or phone number returns false",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/create": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Create a new patient",
+        "operationId": "patient/create",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Patient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean along with complete record object",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true,
+                  "record": {}
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/update": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Updates an existing patient",
+        "operationId": "patient/update",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/updatePatient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/uploadFiles": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Upload Files to Patient Journeys",
+        "operationId": "patient/uploadfiles",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/uploadPatientFile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/getAvailableSlots": {
+      "post": {
+        "tags": ["Slot"],
+        "summary": "Fetch available time slots of an entity (doctor, room, etc).",
+        "operationId": "getAvailableSlots",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/getAvailableSlots"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successfully fetched slots and returns list of slots"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    },
+    "/patient": {
+      "get": {
+        "tags": ["Patient"],
+        "summary": "Get the details of a patient",
+        "description": "Get the details of patient matching the uhid provided.",
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "uhid",
+            "in": "query",
+            "description": "Unique Health ID",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns patient list and count if success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Patient"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/external/webhook/spandan/ecg-data": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Upload ECG Data",
+        "description": "Upload ECG report for a patient using UHID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uhid": {
+                    "type": "string",
+                    "description": "Unique Health Identifier (UHID) of the patient.",
+                    "example": "MH-24162542"
+                  },
+                  "report": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "ECG report file.",
+                    "example": "2947757.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful upload of ECG data."
+          },
+          "400": {
+            "description": "Bad request, invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized access."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CampScreening": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "createdBy": { "$ref": "#/components/schemas/User" },
+          "updatedBy": { "$ref": "#/components/schemas/User" },
+          "type": { "type": "string" },
+          "status": { "type": "string" },
+          "otherInfo": { "type": "object" },
+          "useManualStatus": { "type": "boolean", "default": false },
+          "fromCSV": { "type": "boolean" },
+          "campId": { "type": "string" },
+          "patientId": { "type": "string" },
+          "oldPatientId": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "isBulkScreening": { "type": "boolean" },
+          "issueCount": { "type": "integer", "default": 0 },
+          "bulkScreeningId": { "type": "string" },
+          "formsDetails": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "formId": { "type": "string" },
+                "results": { "type": "object" },
+                "scores": { "type": "object" },
+                "status": { "type": "string" },
+                "totalScore": { "type": "integer" },
+                "useManualStatus": { "type": "boolean", "default": false },
+                "createdAt": { "type": "string", "format": "date-time" },
+                "updatedAt": { "type": "string", "format": "date-time" }
+              }
+            }
+          },
+          "previousFollowupScreeningId": { "type": "string" },
+          "previousScreeningId": { "type": "string" },
+          "isResolved": { "type": "boolean", "default": false },
+          "resolvingReason": { "type": "string" },
+          "isReassist": { "type": "boolean", "default": false },
+          "resolvedBy": { "type": "string" },
+          "resolvedAt": { "type": "string", "format": "date-time" },
+          "fromExternalRegistration": { "type": "boolean" },
+          "labItem": { "type": "string" },
+          "screeningNumber": { "type": "integer" },
+          "screeningDate": { "type": "string", "format": "date-time" },
+          "isCleared": { "type": "boolean", "default": false },
+          "scheduledBy": { "type": "string" },
+          "notSubmitted": { "type": "boolean", "default": false },
+          "calls": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Camp": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "required": true },
+          "type": { "type": "string", "required": true },
+          "externalCampId": { "type": "string" },
+          "subDivision": { "type": "string" },
+          "villagePinCode": { "type": "string", "required": true },
+          "villageName": { "type": "string", "required": true },
+          "stateName": { "type": "string" },
+          "campDescription": { "type": "string" },
+          "expectedReportNumber": { "type": "integer", "default": 0 },
+          "numberOfConsolidatedReportGenerated": {
+            "type": "integer",
+            "default": 0
+          },
+          "createdBy": { "$ref": "#/components/schemas/User" },
+          "updatedBy": { "$ref": "#/components/schemas/User" },
+          "assigningAuthority": { "type": "string" },
+          "store": { "type": "string" },
+          "status": { "type": "string", "default": "Active" },
+          "campStartDate": { "type": "string", "format": "date" },
+          "campEndDate": { "type": "string", "format": "date" },
+          "screeningStartDate": { "type": "string", "format": "date" },
+          "screeningStartTime": { "type": "string" },
+          "screeningEndDate": { "type": "string", "format": "date" },
+          "phc": { "type": "string" },
+          "talukaName": { "type": "string" },
+          "labourInspectorName": { "type": "string" },
+          "unionName": { "type": "string" },
+          "unionLeaderName": { "type": "string" },
+          "latitude": { "type": "number" },
+          "longitude": { "type": "number" },
+          "disableMessaging": { "type": "boolean" },
+          "numberScreeningsDone": { "type": "integer", "default": 0 },
+          "statusLog": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": { "type": "string" },
+                "updatedAt": { "type": "string", "format": "date-time" },
+                "updatedBy": { "type": "string" }
+              }
+            }
+          },
+          "reportUrl": { "type": "string" },
+          "reportGeneratedAt": { "type": "string", "format": "date-time" },
+          "reportSentAt": { "type": "string", "format": "date-time" },
+          "dicUsers": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "deoUsers": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "driverUsers": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "forms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "string" },
+                "label": { "type": "string" },
+                "patientConsumable": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "itemName": { "type": "string" },
+                      "itemId": { "type": "string" },
+                      "code": { "type": "string" },
+                      "quantity": { "type": "integer" },
+                      "batchNumber": { "type": "string" }
+                    }
+                  }
+                },
+                "userAccess": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": { "type": "string" },
+                      "label": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemName": { "type": "string" },
+                "itemId": { "type": "string" },
+                "code": { "type": "string" },
+                "quantity": { "type": "integer" },
+                "batchNumber": { "type": "string" }
+              }
+            }
+          },
+          "siteConsumable": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemName": { "type": "string" },
+                "itemId": { "type": "string" },
+                "code": { "type": "string" },
+                "quantity": { "type": "integer" },
+                "batchNumber": { "type": "string" }
+              }
+            }
+          },
+          "extraDetails": {
+            "type": "object",
+            "properties": {
+              "labParameters": { "type": "object" },
+              "labItem": { "type": "string" },
+              "matchingDetail": { "type": "object" },
+              "isAdvanceFormSelection": { "type": "boolean" }
+            }
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "Lead": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "callFrom": { "type": "string" },
+          "callType": { "type": "string" },
+          "status": { "type": "string" },
+          "assigningAuthority": { "type": "string" },
+          "created": { "type": "string", "format": "date-time" },
+          "patientId": { "type": "string" },
+          "sourceId": { "type": "string" },
+          "lastScheduledArray": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "lastScheduled": { "type": "string", "format": "date-time" },
+                "note": { "type": "string" }
+              }
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": { "type": "string" },
+                "createdBy": { "type": "string" },
+                "createdAt": { "type": "string", "format": "date-time" }
+              }
+            }
+          },
+          "lastConsultation": { "type": "string" },
+          "data": {
+            "type": "object",
+            "properties": {
+              "gender": { "type": "string" },
+              "pname": { "type": "string" },
+              "email": { "type": "string" },
+              "age": { "type": "integer" },
+              "pincode": { "type": "integer" },
+              "uhid": { "type": "string" },
+              "symptoms": { "type": "string" },
+              "doctor": { "type": "string" },
+              "consultationType": { "type": "string" },
+              "department": { "type": "string" },
+              "speciality": { "type": "string" },
+              "reports": { "type": "string" }
+            }
+          },
+          "referralData": {
+            "type": "object",
+            "properties": {
+              "contact": { "type": "string" },
+              "pname": { "type": "string" },
+              "age": { "type": "integer" },
+              "pincode": { "type": "integer" },
+              "createdAt": { "type": "string", "format": "date-time" },
+              "createdBy": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "userId": { "type": "string" },
+                  "userType": { "type": "string" }
+                }
+              },
+              "billId": { "type": "string" },
+              "referredBy": { "type": "string" },
+              "uhid": { "type": "string" },
+              "referralDoctor": { "type": "string" },
+              "department": { "type": "string" },
+              "notes": { "type": "string" },
+              "serviceType": { "type": "string" },
+              "status": { "type": "string" },
+              "reports": { "type": "string" },
+              "condition": { "type": "string" },
+              "symptoms": { "type": "string" },
+              "gender": { "type": "string" },
+              "suggestedInvestigations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "gst": { "type": "string" },
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "price": { "type": "number" },
+                    "type": { "type": "string" }
+                  }
+                }
+              },
+              "isCompleted": { "type": "boolean", "default": false }
+            }
+          },
+          "isCleared": { "type": "boolean", "default": false },
+          "followUpData": {
+            "type": "object",
+            "properties": {
+              "isAssigned": { "type": "boolean", "default": false },
+              "assignments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dueDate": { "type": "string", "format": "date-time" },
+                    "text": { "type": "string" },
+                    "assignedTo": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string" },
+                        "userId": { "type": "string" },
+                        "userType": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "reasonForClearing": { "type": "string" },
+          "screeningId": { "type": "string" },
+          "createdBy": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "userId": { "type": "string" },
+              "userType": { "type": "string" }
+            }
+          },
+          "isResolved": { "type": "boolean", "default": false },
+          "resolvedBy": { "type": "string" },
+          "resolvingReason": { "type": "string" },
+          "calls": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "User's full name" },
+          "userId": { "type": "string", "description": "Unique User ID" },
+          "userType": { "type": "string", "description": "User role or type" }
+        },
+        "required": ["name", "userId", "userType"]
+      },
+      "Patient": {
+        "required": ["dob", "fName", "gender", "mobile"],
+        "type": "object",
+        "properties": {
+          "fName": {
+            "type": "string"
+          },
+          "lName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "secondaryMobile": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "permanentAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "temporaryAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "household": {
+            "$ref": "#/components/schemas/Patient_household"
+          },
+          "employmentStatus": {
+            "type": "string"
+          },
+          "kyc": {
+            "$ref": "#/components/schemas/Patient_kyc"
+          },
+          "insurance": {
+            "$ref": "#/components/schemas/Patient_insurance"
+          },
+          "careGiver": {
+            "$ref": "#/components/schemas/Patient_careGiver"
+          },
+          "otherFieldValues": {
+            "$ref": "#/components/schemas/Patient_otherFieldValues"
+          },
+          "assigningAuthority": {
+            "$ref": "#/components/schemas/Patient_assigningAuthority"
+          },
+          "history": {
+            "type": "string"
+          },
+          "familyHistory": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "updatedBy": {
+            "type": "string"
+          },
+          "updatedOn": {
+            "type": "string"
+          },
+          "partnerOrganization": {
+            "type": "string"
+          },
+          "uhid": {
+            "type": "string",
+            "description": "Identifies a patient uniquely"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "organisationName": {
+            "type": "string"
+          },
+          "isVip": {
+            "type": "string"
+          },
+          "deathDate": {
+            "type": "string"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "partnerOrganisation": {
+            "type": "string"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "walletAmount": {
+            "type": "number"
+          },
+          "ipdType": {
+            "type": "string"
+          },
+          "activityReviews": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "clinicalTags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "balance": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "externalUhid": {
+            "type": "string",
+            "description": "Identifies a patient from other platform"
+          },
+          "kycFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "historyFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workingDiagnosis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allergies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vaccines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vaccines"
+            }
+          }
+        }
+      },
+      "Vaccines": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "doseNo": {
+            "type": "string"
+          },
+          "prevents": {
+            "type": "string"
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "givenOn": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "doseAdministered": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "lotNo": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_assigningAuthority": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "_id": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "updatePatient": {
+        "required": ["patientId"],
+        "type": "object",
+        "properties": {
+          "fName": {
+            "type": "string"
+          },
+          "lName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "secondaryMobile": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "permanentAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "temporaryAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "household": {
+            "$ref": "#/components/schemas/Patient_household"
+          },
+          "employmentStatus": {
+            "type": "string"
+          },
+          "kyc": {
+            "$ref": "#/components/schemas/Patient_kyc"
+          },
+          "insurance": {
+            "$ref": "#/components/schemas/Patient_insurance"
+          },
+          "careGiver": {
+            "$ref": "#/components/schemas/Patient_careGiver"
+          },
+          "otherFieldValues": {
+            "$ref": "#/components/schemas/Patient_otherFieldValues"
+          },
+          "assigningAuthority": {
+            "$ref": "#/components/schemas/Patient_assigningAuthority"
+          },
+          "history": {
+            "type": "string"
+          },
+          "familyHistory": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "updatedBy": {
+            "type": "string"
+          },
+          "updatedOn": {
+            "type": "string"
+          },
+          "partnerOrganization": {
+            "type": "string"
+          },
+          "uhid": {
+            "type": "string",
+            "description": "Identifies a patient uniquely"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "organisationName": {
+            "type": "string"
+          },
+          "isVip": {
+            "type": "string"
+          },
+          "deathDate": {
+            "type": "string"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "partnerOrganisation": {
+            "type": "string"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "walletAmount": {
+            "type": "number"
+          },
+          "ipdType": {
+            "type": "string"
+          },
+          "activityReviews": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "clinicalTags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "balance": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "externalUhid": {
+            "type": "string",
+            "description": "Identifies a patient from other platform"
+          },
+          "kycFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "historyFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workingDiagnosis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allergies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vaccines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vaccines"
+            }
+          }
+        },
+        "xml": {
+          "name": "Patient"
+        }
+      },
+      "list": {
+        "type": "object",
+        "properties": {
+          "doctors": {
+            "type": "array",
+            "description": "array containin objects of type doctor.",
+            "items": {
+              "$ref": "#/components/schemas/doctorItem"
+            }
+          },
+          "totalCount": {
+            "type": "number",
+            "description": "total number of records"
+          }
+        }
+      },
+      "getDetails": {
+        "type": "object",
+        "properties": {
+          "patients": {
+            "type": "array",
+            "description": "array containin objects of type patient.",
+            "items": {
+              "patient": {
+                "permanentAddress": {
+                  "street": "",
+                  "zip": "123456",
+                  "city": "Demo",
+                  "state": "Demo"
+                },
+                "kycFiles": [],
+                "historyFiles": [],
+                "workingDiagnosis": [],
+                "allergies": [],
+                "balance": 0,
+                "oldPatientId": [],
+                "mergedFields": [],
+                "disablePatient": false,
+                "activityReviews": [],
+                "tags": [],
+                "clinicalTags": [],
+                "registeredAuthorities": "Demo_123",
+                "initialRegisteredAuthorities": [],
+                "_id": "Demo_567",
+                "fName": "Demo",
+                "lName": "Demo",
+                "gender": "Male",
+                "dob": "2001-09-07T10:23:59.010Z",
+                "maritalStatus": "Single",
+                "fatherName": "Demo",
+                "mobile": "1234567890",
+                "countryMobileCode": "91",
+                "secondaryMobileCode": "",
+                "assigningAuthority": {
+                  "_id": "Demo_123",
+                  "name": "Demo Hospital",
+                  "nationality": "Indian",
+                  "uhid": "MH-123",
+                  "createdBy": "Demo",
+                  "createdOn": "2022-12-07T10:23:59.378Z",
+                  "vaccines": [],
+                  "externalIds": [],
+                  "createdAt": "2022-12-07T10:23:59.454Z",
+                  "updatedAt": "2022-12-07T10:28:04.761Z",
+                  "fullName": "Demo",
+                  "isRegistrationDone": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "uploadPatientFile": {
+        "type": "object",
+        "required": ["patient_files", "reportType", "patientId", "date"],
+        "properties": {
+          "patient_files": {
+            "type": "string",
+            "description": "input stream of the file",
+            "format": "binary"
+          },
+          "reportType": {
+            "type": "string",
+            "description": ""
+          },
+          "patientId": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "date": {
+            "type": "string",
+            "format": "Date ISO String",
+            "example": "2021-12-26T11:10:10.010Z"
+          }
+        }
+      },
+      "doctorItem": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "name": {
+            "type": "string",
+            "example": "Anmol Malik"
+          },
+          "department": {
+            "type": "string",
+            "example": "Dermatology"
+          },
+          "unit": {
+            "type": "string",
+            "example": "Cardio"
+          },
+          "qualification": {
+            "type": "string",
+            "example": "MBBS"
+          },
+          "joiningDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "profileUrl": {
+            "type": "string",
+            "format": "url",
+            "example": "https://res.cloudinary.com/teleopdassets/image/upload/v1598816391/Meta_hOS_logo_updated_zghy8q.png"
+          },
+          "mobile": {
+            "type": "number",
+            "example": 1111111111
+          },
+          "registration": {
+            "type": "string",
+            "example": "9909"
+          },
+          "email": {
+            "type": "string",
+            "example": "you@yourdomain.com"
+          },
+          "isVerified": {
+            "type": "boolean",
+            "description": "Is doctor verified or not"
+          },
+          "consultationFee": {
+            "type": "number",
+            "example": 500
+          },
+          "followupConsultations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/followupConsultation"
+            }
+          },
+          "assigningAuthority": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "speciality": {
+            "type": "string"
+          },
+          "monthlyCtc": {
+            "type": "number"
+          }
+        }
+      },
+      "followupConsultation": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "numberOfDays": {
+            "type": "number",
+            "example": 1
+          },
+          "fee": {
+            "type": "number",
+            "example": 500
+          }
+        }
+      },
+      "Doctor": {
+        "required": [
+          "department",
+          "email",
+          "mobile",
+          "name",
+          "qualification",
+          "registrationNo"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "joiningDate": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "number"
+          },
+          "registration": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "profileImg": {
+            "type": "string",
+            "description": "input stream of the file",
+            "format": "binary"
+          },
+          "isVerified": {
+            "type": "number"
+          },
+          "consultationFee": {
+            "type": "number"
+          },
+          "followupConsultations": {
+            "type": "array",
+            "description": "List of FollowUp Consultations",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_followupConsultations"
+            }
+          },
+          "assigningAuthority": {
+            "type": "string",
+            "format": "Object Id"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "externalUnitId": {
+            "type": "string"
+          },
+          "externalDepartmentId": {
+            "type": "string"
+          },
+          "monthlyCtc": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "name": "Demo-doctor",
+          "department": "Dermatology",
+          "unit": "test",
+          "qualification": "mbbs",
+          "joiningDate": "21-Dec-21",
+          "dob": "01-Jan-99",
+          "mobile": 1234547890,
+          "registration": "1",
+          "email": "sharan.j@m16labs.com",
+          "isVerified": true,
+          "consultationFee": 1,
+          "followupConsultations": [],
+          "assigningAuthority": "ObjectId(\"60b9bc21fa286c11b6314ec8\")",
+          "isReferred": false,
+          "address": "test",
+          "description": "Testing description",
+          "clinicName": "Demo",
+          "speciality": "Cardio",
+          "externalId": "123212",
+          "externalUnitId": "321123",
+          "externalDepartmentId": "Dept123",
+          "monthlyCtc": 100000
+        }
+      },
+      "updateDoctor": {
+        "required": ["doctorId"],
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "Object Id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "joiningDate": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "number"
+          },
+          "registration": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "isVerified": {
+            "type": "number"
+          },
+          "consultationFee": {
+            "type": "number"
+          },
+          "followupConsultations": {
+            "type": "array",
+            "description": "List of FollowUp Consultations",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_followupConsultations"
+            }
+          },
+          "assigningAuthority": {
+            "type": "string"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "externalUnitId": {
+            "type": "string"
+          },
+          "externalDepartmentId": {
+            "type": "string"
+          },
+          "monthlyCtc": {
+            "type": "string"
+          },
+          "profileUrl": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "doctorId": "ObjectId(\"61c879b6abf75e188aed4f09\")",
+          "Name": "Demo-doctor-edited",
+          "Department": "Dermatology",
+          "Unit": "test-edited",
+          "Qualification": "mbbs",
+          "Description": "Testing description updated"
+        },
+        "xml": {
+          "name": "Doctor"
+        }
+      },
+      "getAvailableSlots": {
+        "required": ["conId", "forDate", "identifier", "slotType", "type"],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "619f7dd4b74e9f43f2f389de"
+          },
+          "type": {
+            "type": "string",
+            "example": "entity"
+          },
+          "forDate": {
+            "type": "string",
+            "format": "Date ISO String",
+            "example": "2021-12-26T11:10:10.010Z"
+          },
+          "conId": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "619f7dd4b74e9f43f2f389de"
+          },
+          "slotType": {
+            "type": "string",
+            "example": "slot"
+          }
+        }
+      },
+      "Patient_permanentAddress": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_household": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "string"
+          },
+          "income": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_kyc": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_insurance": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string"
+          },
+          "policyNo": {
+            "type": "string"
+          },
+          "effectivedate": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_careGiver": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_otherFieldValues": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "object",
+            "description": "Can be any ObjectShould be Stringified JSON"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Doctor_followupConsultations": {
+        "type": "object",
+        "properties": {
+          "numberOfDays": {
+            "type": "number"
+          },
+          "fee": {
+            "type": "number"
+          }
+        },
+        "description": "Stringified Json Object"
+      }
+    }
+  }
+}
