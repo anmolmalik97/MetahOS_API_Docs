@@ -29,9 +29,7 @@
   "paths": {
     "/camps/create": {
       "post": {
-        "tags": [
-          "Camps"
-        ],
+        "tags": ["Camps"],
         "summary": "Create a new camp",
         "security": [
           {
@@ -84,9 +82,7 @@
     },
     "/camps/screening/create": {
       "post": {
-        "tags": [
-          "Camps"
-        ],
+        "tags": ["Camps"],
         "summary": "Create a new screening",
         "security": [
           {
@@ -129,9 +125,7 @@
     },
     "/camps/screening/list": {
       "post": {
-        "tags": [
-          "Camps"
-        ],
+        "tags": ["Camps"],
         "summary": "Get paginated list of screenings",
         "security": [
           {
@@ -189,9 +183,7 @@
     },
     "/camps/leads/list": {
       "post": {
-        "tags": [
-          "Camps"
-        ],
+        "tags": ["Camps"],
         "summary": "Get list of leads",
         "security": [
           {
@@ -253,10 +245,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ]
+              "enum": ["asc", "desc"]
             }
           }
         ],
@@ -297,9 +286,7 @@
     },
     "/doctor/list": {
       "get": {
-        "tags": [
-          "Doctor"
-        ],
+        "tags": ["Doctor"],
         "summary": "Get a list of doctors",
         "description": "Get a list of details of all doctors. Optional filters like name, department, pageNo, limit can be applied.",
         "operationId": "list",
@@ -376,9 +363,7 @@
     },
     "/doctor/create": {
       "post": {
-        "tags": [
-          "Doctor"
-        ],
+        "tags": ["Doctor"],
         "summary": "Create a new doctor",
         "operationId": "create",
         "requestBody": {
@@ -411,9 +396,7 @@
     },
     "/doctor/update": {
       "post": {
-        "tags": [
-          "Doctor"
-        ],
+        "tags": ["Doctor"],
         "summary": "Update an existing doctor information",
         "operationId": "update",
         "requestBody": {
@@ -445,9 +428,7 @@
     },
     "/patient/create": {
       "post": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Create a new patient",
         "operationId": "patient/create",
         "requestBody": {
@@ -480,9 +461,7 @@
     },
     "/patient/update": {
       "post": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Updates an existing patient",
         "operationId": "patient/update",
         "requestBody": {
@@ -514,9 +493,7 @@
     },
     "/patient/uploadFiles": {
       "post": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Upload Files to Patient Journeys",
         "operationId": "patient/uploadfiles",
         "requestBody": {
@@ -548,9 +525,7 @@
     },
     "/getAvailableSlots": {
       "post": {
-        "tags": [
-          "Slot"
-        ],
+        "tags": ["Slot"],
         "summary": "Fetch available time slots of an entity (doctor, room, etc).",
         "operationId": "getAvailableSlots",
         "requestBody": {
@@ -574,9 +549,7 @@
     },
     "/patient": {
       "get": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Get the details of a patient",
         "description": "Get the details of patient matching the uhid provided.",
         "operationId": "get",
@@ -615,9 +588,7 @@
     },
     "/external/webhook/spandan/ecg-data": {
       "post": {
-        "tags": [
-          "Patient"
-        ],
+        "tags": ["Patient"],
         "summary": "Upload ECG Data",
         "description": "Upload ECG report for a patient using UHID.",
         "requestBody": {
@@ -656,10 +627,10 @@
         }
       }
     },
-       
- "/doctor/doctor-by-id": {
+
+    "/doctor/doctor-by-id": {
       "post": {
-        "tags": [ "Doctor"],
+        "tags": ["Doctor"],
         "summary": "Fetch doctor details using doctorId",
         "requestBody": {
           "required": true,
@@ -696,8 +667,16 @@
                   "unit": "M16labs",
                   "consultationFee": 500,
                   "followupConsultations": [
-                    {"_id": "6139b9dfbcea2e7db17fcc29", "numberOfDays": 7, "fee": 0},
-                    {"_id": "6139b9dfbcea2e7db17fcc2a", "numberOfDays": 15, "fee": 500}
+                    {
+                      "_id": "6139b9dfbcea2e7db17fcc29",
+                      "numberOfDays": 7,
+                      "fee": 0
+                    },
+                    {
+                      "_id": "6139b9dfbcea2e7db17fcc2a",
+                      "numberOfDays": 15,
+                      "fee": 500
+                    }
                   ],
                   "department": "General Medicine",
                   "profileUrl": "https://myteleopd.s3.ap-south-1.amazonaws.com/..."
@@ -705,14 +684,14 @@
               }
             }
           },
-          "404": {"description": "Doctor not found"},
-          "500": {"description": "Internal server error"}
+          "404": { "description": "Doctor not found" },
+          "500": { "description": "Internal server error" }
         }
       }
-    },      
+    },
     "/op/consultation/by-id": {
       "post": {
-        "tags": [ "Consultation"],
+        "tags": ["Consultation"],
         "summary": "Fetch consultation details using consultationId",
         "requestBody": {
           "required": true,
@@ -773,16 +752,16 @@
               }
             }
           },
-          "404": {"description": "Consultation not found"},
-          "500": {"description": "Internal server error"}
+          "404": { "description": "Consultation not found" },
+          "500": { "description": "Internal server error" }
         }
       }
     },
-   "/op/consultation/submit-note": {
+    "/snapdocs/consultation/submit-note": {
       "post": {
-        "tags": [ "Consultation"],
+        "tags": ["SnapDocs"],
         "summary": "Submit Consultation Note",
-        "operationId":"submitConsultationNote",
+        "operationId": "submitConsultationNote",
         "requestBody": {
           "required": true,
           "content": {
@@ -1617,19 +1596,10 @@
             "description": "User role or type"
           }
         },
-        "required": [
-          "name",
-          "userId",
-          "userType"
-        ]
+        "required": ["name", "userId", "userType"]
       },
       "Patient": {
-        "required": [
-          "dob",
-          "fName",
-          "gender",
-          "mobile"
-        ],
+        "required": ["dob", "fName", "gender", "mobile"],
         "type": "object",
         "properties": {
           "fName": {
@@ -1852,9 +1822,7 @@
         "description": "Should be Stringified JSON"
       },
       "updatePatient": {
-        "required": [
-          "patientId"
-        ],
+        "required": ["patientId"],
         "type": "object",
         "properties": {
           "fName": {
@@ -2103,12 +2071,7 @@
       },
       "uploadPatientFile": {
         "type": "object",
-        "required": [
-          "patient_files",
-          "reportType",
-          "patientId",
-          "date"
-        ],
+        "required": ["patient_files", "reportType", "patientId", "date"],
         "properties": {
           "patient_files": {
             "type": "string",
@@ -2348,9 +2311,7 @@
         }
       },
       "updateDoctor": {
-        "required": [
-          "doctorId"
-        ],
+        "required": ["doctorId"],
         "type": "object",
         "properties": {
           "doctorId": {
@@ -2441,13 +2402,7 @@
         }
       },
       "getAvailableSlots": {
-        "required": [
-          "conId",
-          "forDate",
-          "identifier",
-          "slotType",
-          "type"
-        ],
+        "required": ["conId", "forDate", "identifier", "slotType", "type"],
         "type": "object",
         "properties": {
           "identifier": {
@@ -2570,4 +2525,4 @@
       }
     }
   }
-  }
+}
