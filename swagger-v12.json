@@ -657,9 +657,9 @@
       }
     },
        
- "/api/external/webhook/doctor/doctor-by-id": {
+ "/doctor/doctor-by-id": {
       "post": {
-        "tags": ["Webhook", "Doctor"],
+        "tags": [ "Doctor"],
         "summary": "Fetch doctor details using doctorId",
         "requestBody": {
           "required": true,
@@ -709,54 +709,10 @@
           "500": {"description": "Internal server error"}
         }
       }
-    },
-    "/api/external/webhook/patient": {
-      "get": {
-        "tags": ["Webhook", "Patient"],
-        "summary": "Fetch patient details using patientId (webhooks)",
-        "parameters": [
-          {
-            "name": "patientId",
-            "in": "query",
-            "required": true,
-            "schema": {"type": "string"},
-            "description": "Patient's unique identifier"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Patient details found",
-            "content": {
-              "application/json": {
-                "example": {
-                  "patient": {
-                    "_id": "61277a614a63c25a60b348b2",
-                    "fName": "Sharan ",
-                    "lName": "F.",
-                    "gender": "Male",
-                    "dob": "1995-08-26T11:26:24.728Z",
-                    "mobile": "8929397552",
-                    "assigningAuthority": "61224cbb5abfb77eef162234",
-                    "uhid": "MH-2100007",
-                    "fullName": "Sharan  F.",
-                    "permanentAddress": {
-                      "zip": "110012",
-                      "city": "I.A.R.I.",
-                      "state": "DELHI"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {"description": "Patient not found"},
-          "500": {"description": "Internal server error"}
-        }
-      }
-    },
-    "/api/external/webhook/op/consultation/by-id": {
+    },      
+    "/op/consultation/by-id": {
       "post": {
-        "tags": ["Webhook", "Consultation"],
+        "tags": [ "Consultation"],
         "summary": "Fetch consultation details using consultationId",
         "requestBody": {
           "required": true,
@@ -819,6 +775,115 @@
           },
           "404": {"description": "Consultation not found"},
           "500": {"description": "Internal server error"}
+        }
+      }
+    },
+   "/op/consultation/submit-note": {
+      "post": {
+        "tags": [ "Consultation"],
+        "summary": "Submit Consultation Note",
+        "operationId":"submitConsultationNote",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consultationId": { "type": "string", "example": "some id" },
+                  "doctorId": { "type": "string", "example": "some id" },
+                  "patientId": { "type": "string", "example": "some id" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "summary": { "type": "string" },
+                      "subjective": {
+                        "type": "object",
+                        "properties": {
+                          "chief_complaint": { "type": "string" },
+                          "history_of_present_illness": { "type": "string" },
+                          "medical_history": { "type": "string" },
+                          "allergies": { "type": "string" },
+                          "immunizations": { "type": "string" },
+                          "review_of_systems": { "type": "string" },
+                          "present_illness": { "type": "string" },
+                          "patient_reported_symptoms": { "type": "string" },
+                          "surgical_history": { "type": "string" },
+                          "current_medications": { "type": "string" },
+                          "family_history": { "type": "string" },
+                          "social_history": { "type": "string" },
+                          "functional_status": { "type": "string" },
+                          "health_goals": { "type": "string" }
+                        }
+                      },
+                      "objective": {
+                        "type": "object",
+                        "properties": {
+                          "vital_signs": { "type": "string" },
+                          "physical_examination": { "type": "string" },
+                          "diagnostic_test_results": { "type": "string" },
+                          "other_findings": { "type": "string" },
+                          "general_appearance": { "type": "string" },
+                          "neurological": { "type": "string" },
+                          "imaging_results": { "type": "string" },
+                          "procedures_done_during_visit": { "type": "string" },
+                          "device_readings": { "type": "string" },
+                          "specialist_reports": { "type": "string" }
+                        }
+                      },
+                      "assessment_plan": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "problem": { "type": "string" },
+                            "assessment": { "type": "string" },
+                            "plan": { "type": "string" }
+                          }
+                        }
+                      },
+                      "icd_codes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "problem": { "type": "string" },
+                            "code": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["consultationId", "doctorId", "patientId", "data"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": {
+                      "type": "string",
+                      "example": "Note saved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Server error"
+          }
         }
       }
     }
@@ -2505,4 +2570,4 @@
       }
     }
   }
-}
+  }
