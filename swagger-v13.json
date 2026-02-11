@@ -1,0 +1,4734 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MetahOS API",
+    "description": "# Overview\nMetahOS API lets you interact with the MetahOS platform. In the following APIs the BaseUrl refers to the Platform-Url\n\nFor Example: demo.metahos.com/api/external/webhook\n\nHere \"demo\" will be replaced by your platform subdomain\n# Authentication\nMetahOS API expects an username, and password. All MetahOS API calls are executed in an account's context.\n",
+    "contact": {
+      "email": "contact@m16labs.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0",
+    "x-logo": {
+      "url": "https://myteleopd.s3.ap-south-1.amazonaws.com/undefined-1755022359440.png",
+      "altText": "M16labs-logo"
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "baseUrl",
+      "description": "MetahOS APIs"
+    }
+  ],
+  "paths": {
+    "/camps/create": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Create a new camp",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Camp"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Camp created successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": "123e4567-e89b-12d3-a456-426614174000",
+                  "name": "Health Camp",
+                  "type": "Medical",
+                  "externalCampId": "HC-001",
+                  "villageName": "Example Village",
+                  "createdBy": {
+                    "name": "Admin User",
+                    "userId": "507f191e810c19729de860ea",
+                    "userType": "Admin"
+                  },
+                  "createdAt": "2024-03-09T12:00:00Z"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Camp already exists.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Camp with camp name 'Health Camp' already exists."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camps/screening/create": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Create a new screening",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampScreening"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Screening created successfully.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Screening created successfully."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Database connection failed."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camps/screening/list": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Get paginated list of screenings",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of screenings with pagination.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "screenings": [
+                    {
+                      "id": "1a2b3c",
+                      "campId": "5678",
+                      "patientId": "91011",
+                      "type": "Initial Checkup",
+                      "status": "Completed"
+                    }
+                  ],
+                  "count": 1
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Something went wrong."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/camps/leads/list": {
+      "post": {
+        "tags": ["Camps"],
+        "summary": "Get list of leads",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dueFilter": {
+                    "type": "string"
+                  },
+                  "selectedCamp": {
+                    "type": "string"
+                  },
+                  "assigningAuthority": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "pageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortKey",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns list of leads with pagination.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "leads": [
+                    {
+                      "id": "lead-001",
+                      "callFrom": "John Doe",
+                      "callType": "Follow-up",
+                      "status": "Pending",
+                      "assigningAuthority": "Clinic A",
+                      "patientId": "patient-123",
+                      "created": "2024-03-09T08:30:00Z"
+                    }
+                  ],
+                  "count": 1
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Failed to fetch leads."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/doctor/list": {
+      "get": {
+        "tags": ["Doctor"],
+        "summary": "Get a list of doctors",
+        "description": "Get a list of details of all doctors. Optional filters like name, department, pageNo, limit can be applied.",
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Doctor Name (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "description": "Doctor Department (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "description": "Page Number (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum Limit (Optional)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with all doctor details.",
+            "content": {
+              "multipart/form-data": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/list"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    },
+    "/doctor/create": {
+      "post": {
+        "tags": ["Doctor"],
+        "summary": "Create a new doctor",
+        "operationId": "create",
+        "requestBody": {
+          "description": "Name and mobile number should be unique",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Doctor"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success true if success and if a doctor exists with same name or phone number returns false",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/doctor/update": {
+      "post": {
+        "tags": ["Doctor"],
+        "summary": "Update an existing doctor information",
+        "operationId": "update",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/updateDoctor"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success true if success and if a doctor exists with same name or phone number returns false",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/create": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Create a new patient",
+        "operationId": "patient/create",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Patient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean along with complete record object",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true,
+                  "record": {}
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/update": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Updates an existing patient",
+        "operationId": "patient/update",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/updatePatient"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/patient/bulkwrite": {
+      "post": {
+        "summary": "Bulk insert/update patients",
+        "tags": ["Patient"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "skipAssigningAuthCheckInExistingPatient": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "patients": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/BulkPatient"
+                    }
+                  }
+                },
+                "required": ["patients"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Bulk write success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "ids": {
+                      "type": "array",
+                      "items": { "type": "string", "format": "ObjectId" }
+                    },
+                    "uhids": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string",
+                      "example": "internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/patient/list": {
+      "get": {
+        "summary": "Get paginated list of patients",
+        "tags": ["Patient"],
+        "parameters": [
+          {
+            "name": "pageNo",
+            "in": "query",
+            "schema": { "type": "integer", "default": 0 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 10, "maximum": 100 }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Text search on patient name, UHID, or mobile"
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "currentPatient",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "assigningAuthority",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "noAuthorityFilter",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "allowPrtialSearch",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of patients with pagination metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "patients": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Patient" }
+                    },
+                    "totalCount": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+
+    "/patient/journey/list": {
+      "get": {
+        "summary": "List journey entries for a patient",
+        "tags": ["Patient"],
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "format": "ObjectId" }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer", "default": 10 }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CONSULTATION",
+                "APPOINTMENT",
+                "LEGACY_CONSULTATION",
+                "MERGE_PATIENT",
+                "REGISTRATION"
+              ]
+            }
+          },
+          {
+            "name": "hidden",
+            "in": "query",
+            "schema": { "type": "boolean", "default": true }
+          },
+          {
+            "name": "forCCDA",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of journey records for the patient",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "docs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PatientJourney"
+                      }
+                    },
+                    "totalDocs": { "type": "integer" },
+                    "totalPages": { "type": "integer" },
+                    "page": { "type": "integer" },
+                    "limit": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string",
+                      "example": "internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patient/uploadFiles": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Upload Files to Patient Journeys",
+        "operationId": "patient/uploadfiles",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/uploadPatientFile"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Returns success as boolean",
+            "x-examples": {
+              "application/json": [
+                {
+                  "success": true
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/getAvailableSlots": {
+      "post": {
+        "tags": ["Slot"],
+        "summary": "Fetch available time slots of an entity (doctor, room, etc).",
+        "operationId": "getAvailableSlots",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/getAvailableSlots"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successfully fetched slots and returns list of slots"
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    },
+    "/patient": {
+      "get": {
+        "tags": ["Patient"],
+        "summary": "Get the details of a patient",
+        "description": "Get the details of patient matching the uhid provided.",
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "uhid",
+            "in": "query",
+            "description": "Unique Health ID",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns patient list and count if success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Patient"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/external/webhook/patient/getItemsForOnlineBooking": {
+      "get": {
+        "tags": ["External Booking"],
+        "summary": "Get items for online booking (OPD/TELE)",
+        "description": "Returns OPD and TELE itemIds for a location. Use these itemIds in /external/webhook/op/consultation/create or /external/webhook/op/consultation/createWithSlot.",
+        "parameters": [
+          {
+            "name": "assigningAuthority",
+            "in": "query",
+            "description": "Location/Assigning Authority ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OPD and TELE items configured for booking",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "opdItem": {
+                      "type": "object",
+                      "description": "OPD item details",
+                      "properties": {
+                        "_id": { "type": "string" },
+                        "name": { "type": "string" },
+                        "type": { "type": "string", "example": "OPD" },
+                        "price": { "type": "number" },
+                        "gst": { "type": "number" }
+                      }
+                    },
+                    "teleItem": {
+                      "type": "object",
+                      "description": "TELE item details",
+                      "properties": {
+                        "_id": { "type": "string" },
+                        "name": { "type": "string" },
+                        "type": { "type": "string", "example": "TELE" },
+                        "price": { "type": "number" },
+                        "gst": { "type": "number" }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "opdItem": {
+                    "_id": "ITEM_OPD_001",
+                    "name": "OPD Consultation",
+                    "type": "OPD",
+                    "price": 500,
+                    "gst": 0
+                  },
+                  "teleItem": {
+                    "_id": "ITEM_TELE_001",
+                    "name": "Tele Consultation",
+                    "type": "TELE",
+                    "price": 500,
+                    "gst": 0
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Items not configured for authority"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/external/webhook/assigningAuthority": {
+      "get": {
+        "tags": ["External Booking"],
+        "summary": "Select Location (Assigning Authorities)",
+        "description": "List available locations/sites for booking.",
+        "parameters": [
+          {
+            "name": "pageNo",
+            "in": "query",
+            "description": "Page number (Optional)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum limit (Optional)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Filter by location name (Optional)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "description": "Filter by location code (Optional)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of locations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssigningAuthorityList"
+                },
+                "example": {
+                  "sites": [
+                    {
+                      "_id": "60d1f95b2e35c7001c7d6e12",
+                      "name": "Main Clinic",
+                      "code": "MC01",
+                      "location": "Bangalore"
+                    }
+                  ],
+                  "totalCount": 1,
+                  "limit": 10,
+                  "pageNo": 0
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/external/webhook/doctor/list": {
+      "get": {
+        "tags": ["External Booking"],
+        "summary": "Select Doctor (by location)",
+        "description": "List doctors. Use assigningAuthority to filter by location.",
+        "parameters": [
+          {
+            "name": "assigningAuthority",
+            "in": "query",
+            "description": "Location/Assigning Authority ID (Optional)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Doctor name (Optional)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "description": "Doctor department (Optional)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNo",
+            "in": "query",
+            "description": "Page number (Optional)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum limit (Optional)",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "showActive",
+            "in": "query",
+            "description": "Show active or inactive doctors (Optional, true/false)",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of doctors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/list"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/external/webhook/calendar/getAvailableSlots": {
+      "post": {
+        "tags": ["External Booking"],
+        "summary": "Select Slot (Get Available Slots)",
+        "description": "Fetch available time slots for a doctor or resource.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/getAvailableSlots"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully fetched available slots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "availableSlots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "availableSlots": [
+                    {
+                      "start": "2026-02-25T18:30:00.000Z",
+                      "end": "2026-02-25T18:45:00.000Z",
+                      "isOnlineSlot": true
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/external/webhook/op/consultation/create": {
+      "post": {
+        "summary": "Confirm Consultation Booking (no payment)",
+        "description": "Creates a consultation with bill amount 0 for external integrations. Use external IDs to prevent duplicates.",
+        "tags": ["External Booking"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorId": {
+                    "type": "string",
+                    "description": "Internal doctor ID"
+                  },
+                  "externalDoctorId": {
+                    "type": "string",
+                    "description": "External doctor identifier"
+                  },
+                  "externalConsultationId": {
+                    "type": "string",
+                    "description": "External consultation identifier"
+                  },
+                  "externalPatientId": {
+                    "type": "string",
+                    "description": "External patient identifier"
+                  },
+                  "patientId": {
+                    "type": "string",
+                    "description": "Internal patient ID"
+                  },
+                  "uhid": {
+                    "type": "string",
+                    "description": "Unique hospital ID (UHID)"
+                  },
+                  "itemId": {
+                    "type": "string",
+                    "description": "Service item ID for consultation"
+                  }
+                },
+                "required": ["itemId"]
+              },
+              "examples": {
+                "createConsultation": {
+                  "value": {
+                    "doctorId": "60d1f95b2e35c7001c7d6e12",
+                    "externalDoctorId": "DOC123",
+                    "externalConsultationId": "CONSULT456",
+                    "externalPatientId": "EXTPT789",
+                    "patientId": "60d1f95b2e35c7001c7d6e55",
+                    "uhid": "UHID001",
+                    "itemId": "ITEM001"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultation created successfully or validation failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": { "type": "boolean", "example": true },
+                        "message": { "type": "string", "example": "Success!" },
+                        "consultation": {
+                          "type": "object",
+                          "properties": {
+                            "_id": { "type": "string" },
+                            "department": { "type": "string" },
+                            "itemId": { "type": "string" },
+                            "mode": { "type": "string" },
+                            "scheduledAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "patientId": { "type": "string" },
+                            "doctorId": { "type": "string" },
+                            "status": { "type": "string" },
+                            "vcRoom": { "type": ["string", "null"] },
+                            "billId": { "type": "string" }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": { "type": "boolean", "example": false },
+                        "message": { "type": "string" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error - patient or doctor not found, or duplicate consultation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - unknown failure"
+          }
+        }
+      }
+    },
+    "/external/webhook/op/consultation/createWithSlot": {
+      "post": {
+        "summary": "Confirm Consultation Booking with slot (blocks calendar)",
+        "description": "Creates a consultation and blocks the selected slot on the doctor's calendar (no payment).",
+        "tags": ["External Booking"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorId": {
+                    "type": "string",
+                    "description": "Internal doctor ID"
+                  },
+                  "externalDoctorId": {
+                    "type": "string",
+                    "description": "External doctor identifier"
+                  },
+                  "externalConsultationId": {
+                    "type": "string",
+                    "description": "External consultation identifier"
+                  },
+                  "externalPatientId": {
+                    "type": "string",
+                    "description": "External patient identifier"
+                  },
+                  "patientId": {
+                    "type": "string",
+                    "description": "Internal patient ID"
+                  },
+                  "uhid": {
+                    "type": "string",
+                    "description": "Unique hospital ID (UHID)"
+                  },
+                  "itemId": {
+                    "type": "string",
+                    "description": "Service item ID for consultation"
+                  },
+                  "slot": {
+                    "type": "object",
+                    "description": "Slot to block",
+                    "properties": {
+                      "start": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "end": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  },
+                  "start": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Alternative to slot.start"
+                  },
+                  "end": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Alternative to slot.end"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Consultation type (OPD/TELE)",
+                    "example": "OPD"
+                  },
+                  "mode": {
+                    "type": "string",
+                    "description": "Consultation mode",
+                    "example": "audio"
+                  },
+                  "slotId": {
+                    "type": "string",
+                    "description": "Optional slot ID used for validity check"
+                  },
+                  "skipValidityCheck": {
+                    "type": "boolean",
+                    "description": "Skip slot validity check"
+                  }
+                },
+                "required": ["itemId", "slot"]
+              },
+              "examples": {
+                "createWithSlot": {
+                  "value": {
+                    "doctorId": "60d1f95b2e35c7001c7d6e12",
+                    "externalDoctorId": "DOC123",
+                    "externalConsultationId": "CONSULT456",
+                    "externalPatientId": "EXTPT789",
+                    "patientId": "60d1f95b2e35c7001c7d6e55",
+                    "uhid": "UHID001",
+                    "itemId": "ITEM001",
+                    "type": "OPD",
+                    "mode": "audio",
+                    "slot": {
+                      "start": "2026-02-12T09:00:00.000Z",
+                      "end": "2026-02-12T09:15:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultation created successfully or validation failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": { "type": "boolean", "example": true },
+                        "message": { "type": "string", "example": "Success!" },
+                        "consultation": {
+                          "type": "object",
+                          "properties": {
+                            "_id": { "type": "string" },
+                            "department": { "type": "string" },
+                            "itemId": { "type": "string" },
+                            "mode": { "type": "string" },
+                            "scheduledAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "patientId": { "type": "string" },
+                            "doctorId": { "type": "string" },
+                            "status": { "type": "string" },
+                            "vcRoom": { "type": ["string", "null"] },
+                            "billId": { "type": "string" },
+                            "doctorEvent": { "type": ["string", "null"] }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": { "type": "boolean", "example": false },
+                        "message": { "type": "string" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error - patient or doctor not found, or duplicate consultation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Slot not available"
+          },
+          "500": {
+            "description": "Server error - unknown failure"
+          }
+        }
+      }
+    },
+    "/external/webhook/spandan/ecg-data": {
+      "post": {
+        "tags": ["Patient"],
+        "summary": "Upload ECG Data",
+        "description": "Upload ECG report for a patient using UHID.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "uhid": {
+                    "type": "string",
+                    "description": "Unique Health Identifier (UHID) of the patient.",
+                    "example": "MH-24162542"
+                  },
+                  "report": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "ECG report file.",
+                    "example": "2947757.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful upload of ECG data."
+          },
+          "400": {
+            "description": "Bad request, invalid parameters."
+          },
+          "401": {
+            "description": "Unauthorized access."
+          }
+        }
+      }
+    },
+
+    "/doctor/doctor-by-id": {
+      "post": {
+        "tags": ["Doctor"],
+        "summary": "Fetch doctor details using doctorId",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorId": {
+                    "type": "string",
+                    "description": "Doctor's unique identifier"
+                  }
+                },
+                "required": ["doctorId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Doctor details found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "isAnaesthetist": false,
+                  "forEmergencyWard": false,
+                  "languages": [],
+                  "assigningAuthority": {
+                    "_id": "61224cbb5abfb77eef162234",
+                    "name": "AGH Khobar"
+                  },
+                  "id": "6139b9dfbcea2e7db17fcc28",
+                  "name": "Dr Santanu Sarkar",
+                  "unit": "M16labs",
+                  "consultationFee": 500,
+                  "followupConsultations": [
+                    {
+                      "_id": "6139b9dfbcea2e7db17fcc29",
+                      "numberOfDays": 7,
+                      "fee": 0
+                    },
+                    {
+                      "_id": "6139b9dfbcea2e7db17fcc2a",
+                      "numberOfDays": 15,
+                      "fee": 500
+                    }
+                  ],
+                  "department": "General Medicine",
+                  "profileUrl": "https://myteleopd.s3.ap-south-1.amazonaws.com/..."
+                }
+              }
+            }
+          },
+          "404": { "description": "Doctor not found" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/op/consultation/by-id": {
+      "post": {
+        "tags": ["Consultation"],
+        "summary": "Fetch consultation details using consultationId",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consultationId": {
+                    "type": "string",
+                    "description": "Consultation's unique identifier"
+                  }
+                },
+                "required": ["consultationId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultation details found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "_id": "61277a844a63c25a60b348bb",
+                  "status": "completed",
+                  "scheduledAt": "2021-09-16T20:45:00.000Z",
+                  "mode": "audio",
+                  "type": "OPD",
+                  "symptoms": "N/A",
+                  "patientId": {
+                    "_id": "61277a614a63c25a60b348b2",
+                    "fName": "Sharan ",
+                    "lName": "F.",
+                    "gender": "Male",
+                    "dob": "1995-08-26T11:26:24.728Z",
+                    "mobile": "8929397552",
+                    "uhid": "MH-2100007"
+                  },
+                  "doctorId": {
+                    "_id": "6139b9dfbcea2e7db17fcc28",
+                    "Name": "Dr Santanu Sarkar",
+                    "Department": "General Medicine",
+                    "Unit": "M16labs",
+                    "Qualification": "MBBS, MD",
+                    "ProfileURL": "https://myteleopd.s3.ap-south-1.amazonaws.com/...",
+                    "assigningAuthority": {
+                      "_id": "61224cbb5abfb77eef162234",
+                      "name": "AGH Khobar"
+                    }
+                  },
+                  "prescriptionData": {
+                    "chiefComplaints": "Headache",
+                    "diagnosis": "Please see Dr. Arnav in Oncology"
+                  },
+                  "prescription": "https://myteleopd.s3.ap-south-1.amazonaws.com/..."
+                }
+              }
+            }
+          },
+          "404": { "description": "Consultation not found" },
+          "500": { "description": "Internal server error" }
+        }
+      }
+    },
+    "/op/consultation/create": {
+      "post": {
+        "summary": "Create a new consultation",
+        "tags": ["Consultation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doctorId": {
+                    "type": "string",
+                    "description": "Internal doctor ID"
+                  },
+                  "externalDoctorId": {
+                    "type": "string",
+                    "description": "External doctor identifier"
+                  },
+                  "externalConsultationId": {
+                    "type": "string",
+                    "description": "External consultation identifier"
+                  },
+                  "externalPatientId": {
+                    "type": "string",
+                    "description": "External patient identifier"
+                  },
+                  "patientId": {
+                    "type": "string",
+                    "description": "Internal patient ID"
+                  },
+                  "uhid": {
+                    "type": "string",
+                    "description": "Unique hospital ID (UHID)"
+                  },
+                  "itemId": {
+                    "type": "string",
+                    "description": "Service item ID for consultation"
+                  }
+                },
+                "required": ["itemId"]
+              },
+              "examples": {
+                "createConsultation": {
+                  "value": {
+                    "doctorId": "60d1f95b2e35c7001c7d6e12",
+                    "externalDoctorId": "DOC123",
+                    "externalConsultationId": "CONSULT456",
+                    "externalPatientId": "EXTPT789",
+                    "patientId": "60d1f95b2e35c7001c7d6e55",
+                    "uhid": "UHID001",
+                    "itemId": "ITEM001"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultation created successfully or validation failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": { "type": "boolean", "example": true },
+                        "message": { "type": "string", "example": "Success!" },
+                        "consultation": {
+                          "type": "object",
+                          "properties": {
+                            "_id": { "type": "string" },
+                            "department": { "type": "string" },
+                            "itemId": { "type": "string" },
+                            "mode": { "type": "string" },
+                            "scheduledAt": {
+                              "type": "string",
+                              "format": "date-time"
+                            },
+                            "patientId": { "type": "string" },
+                            "doctorId": { "type": "string" },
+                            "status": { "type": "string" },
+                            "vcRoom": { "type": ["string", "null"] },
+                            "billId": { "type": "string" }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "success": { "type": "boolean", "example": false },
+                        "message": { "type": "string" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Client error - patient or doctor not found, or duplicate consultation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error - unknown failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unknown server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/op/consultation/updateConsultation": {
+      "post": {
+        "summary": "Update an existing consultation",
+        "tags": ["Consultation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consultationId": {
+                    "type": "string",
+                    "description": "ID of the consultation to update"
+                  },
+                  "metaData": {
+                    "type": "object",
+                    "description": "Metadata object with additional information"
+                  }
+                },
+                "required": ["consultationId"]
+              },
+              "examples": {
+                "updateConsultation": {
+                  "value": {
+                    "consultationId": "60d1f95b2e35c7001c7d6e66",
+                    "metaData": {
+                      "notes": "Follow-up needed",
+                      "duration": "30min"
+                    },
+                    "mode": "video",
+                    "status": "completed"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultation updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "consultation": {
+                      "type": "object",
+                      "description": "Updated consultation object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Something went wrong!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/op/consultation/list": {
+      "get": {
+        "summary": "List consultations with filters, pagination, and export support",
+        "tags": ["Consultation"],
+        "parameters": [
+          {
+            "name": "pageNo",
+            "in": "query",
+            "schema": { "type": "integer" },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": { "type": "integer" },
+            "description": "Number of results per page"
+          },
+          {
+            "name": "doctorId",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filter by doctor ID"
+          },
+          {
+            "name": "department",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filter by department"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Consultation type (scheduled, completed, etc.)"
+          },
+          {
+            "name": "consultationType",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "OPD, TELE, or IPD"
+          },
+          {
+            "name": "patientId",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filter by patient ID"
+          },
+          {
+            "name": "uhid",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filter by UHID"
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "Start date for filtering (ISO date)"
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "End date for filtering (ISO date)"
+          },
+          {
+            "name": "billedFromDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "Start date for billing filter"
+          },
+          {
+            "name": "billedToDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "End date for billing filter"
+          },
+          {
+            "name": "whichdate",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Specifies which date field to filter on (fromDate/toDate/bothDate)"
+          },
+          {
+            "name": "option",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Date field to apply filter (e.g., scheduledAt, createdAt)"
+          },
+          {
+            "name": "sortKey",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Field to sort by"
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["asc", "desc"] },
+            "description": "Sort order"
+          },
+          {
+            "name": "scheduledBy",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "User ID who scheduled the consultation"
+          },
+          {
+            "name": "authority",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Assigning authority ID"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Search term for doctor, patient, or billNumber"
+          },
+          {
+            "name": "todayOnly",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Date field to use when filtering only today's consultations"
+          },
+          {
+            "name": "starttodayDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "Start of today's date range"
+          },
+          {
+            "name": "endtodayDate",
+            "in": "query",
+            "schema": { "type": "string", "format": "date" },
+            "description": "End of today's date range"
+          },
+          {
+            "name": "currentStatusValue",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Current status of consultation from queue.label"
+          },
+          {
+            "name": "ipd",
+            "in": "query",
+            "schema": { "type": "boolean" },
+            "description": "If true, fetch IPD consultations only"
+          },
+          {
+            "name": "handleCorporate",
+            "in": "query",
+            "schema": { "type": "boolean" },
+            "description": "Filter based on corporate or cash consultation"
+          },
+          {
+            "name": "corporateDocId",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Comma-separated corporate doctor IDs"
+          },
+          {
+            "name": "forCSV",
+            "in": "query",
+            "schema": { "type": "boolean" },
+            "description": "Trigger CSV export response"
+          },
+          {
+            "name": "forPDF",
+            "in": "query",
+            "schema": { "type": "boolean" },
+            "description": "Trigger PDF export response"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of consultations (or exported file)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "consultations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Consultation"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "integer"
+                    },
+                    "uniqueConsultations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Consultation"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string",
+                      "example": "internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/op/consultation/uploadFiles": {
+      "post": {
+        "summary": "Upload files to a Consultation or Appointment",
+        "tags": ["Consultation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Consultation ID (if uploading to consultation)"
+                  },
+                  "appointmentId": {
+                    "type": "string",
+                    "description": "Appointment ID (if uploading to appointment)"
+                  },
+                  "byPatient": {
+                    "type": "boolean",
+                    "description": "Flag to upload into 'filesByPatient' array"
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Array of files to upload"
+                  }
+                },
+                "required": ["files"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Files uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "files": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": "https://s3.amazonaws.com/bucket/filename.jpg"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Upload or update failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string",
+                      "example": "internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/op/consultation/addexternalid": {
+      "post": {
+        "summary": "Add external identifiers to a consultation",
+        "tags": ["Consultation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consultationId": {
+                    "type": "string",
+                    "description": "Internal consultation ID",
+                    "example": "60d1f95b2e35c7001c7d6e66"
+                  },
+                  "externalConsultationId": {
+                    "type": "string",
+                    "description": "External consultation ID (from integrated system)"
+                  },
+                  "externalVisitId": {
+                    "type": "string",
+                    "description": "External visit ID (e.g., HIS visit reference)"
+                  },
+                  "externalTokenNumber": {
+                    "type": "string",
+                    "description": "External token or queue number"
+                  },
+                  "externalValidityString": {
+                    "type": "string",
+                    "description": "Validity string or expiration info from external system"
+                  },
+                  "externalReceipt": {
+                    "type": "string",
+                    "description": "External receipt number or reference"
+                  },
+                  "integrationStatus": {
+                    "type": "string",
+                    "description": "Integration status (default: 'COMPLETED')",
+                    "default": "COMPLETED"
+                  }
+                },
+                "required": ["consultationId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully updated consultation with external IDs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required data or invalid consultation ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": { "type": "string", "example": "bad request" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error during update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string",
+                      "example": "internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/op/consultation/clear": {
+      "post": {
+        "summary": "Clear or unschedule a consultation",
+        "tags": ["Consultation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Consultation ID to clear or unschedule",
+                    "example": "60d1f95b2e35c7001c7d6e66"
+                  },
+                  "scheduledAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Datetime of the originally scheduled consultation"
+                  },
+                  "slot": {
+                    "type": "object",
+                    "description": "Slot object with event ID",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "description": "Slot event ID"
+                      }
+                    }
+                  },
+                  "roomEvent": {
+                    "type": "string",
+                    "description": "Room event ID to be removed"
+                  },
+                  "unscheduledReason": {
+                    "type": "string",
+                    "description": "Reason for unscheduling"
+                  },
+                  "unscheduleType": {
+                    "type": "string",
+                    "description": "Type of unscheduling (e.g., 'transfer', 'mergingSlots')"
+                  },
+                  "billId": {
+                    "type": "string",
+                    "description": "Bill ID associated with the consultation"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Amount to deduct if clearing the consultation"
+                  },
+                  "fName": {
+                    "type": "string",
+                    "description": "Patient's first name (for SMS)"
+                  },
+                  "forRefund": {
+                    "type": "boolean",
+                    "description": "Flag to initiate refund queue process"
+                  },
+                  "invokeQueueStatusWebhook": {
+                    "type": "boolean",
+                    "description": "Invoke queue status webhook after status change"
+                  },
+                  "mobile": {
+                    "type": "string",
+                    "description": "Patient mobile number (for SMS)"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Patient email address (for notifications)"
+                  },
+                  "doctorId": {
+                    "type": "string",
+                    "description": "Doctor ID for sending notifications"
+                  }
+                },
+                "required": ["id"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Consultation cleared or unscheduled successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error during consultation update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string",
+                      "example": "internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/op/consultation/queueStatusChange": {
+      "post": {
+        "summary": "Change queue status for a consultation or appointment",
+        "tags": ["Consultation"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "appointmentId": {
+                    "type": "string",
+                    "description": "ID of the appointment or consultation",
+                    "example": "60d1f95b2e35c7001c7d6e66"
+                  },
+                  "newStatus": {
+                    "type": "string",
+                    "description": "New queue status label",
+                    "example": "IN_PROGRESS"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Reason for status change",
+                    "example": "Doctor started consultation"
+                  }
+                },
+                "required": ["appointmentId", "newStatus"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Queue status updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "isAppointment": { "type": "boolean" },
+                    "appointment": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "consultation": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultation or appointment not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": false },
+                    "error": {
+                      "type": "string",
+                      "example": "Consultation/Appointment not found."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error during status update",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "err": {
+                      "type": "string",
+                      "example": "internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/op/consultation/byexternalid": {
+      "get": {
+        "tags": ["Consultation"],
+        "summary": "Get consultation by external ID",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "externalConsultationId",
+            "schema": { "type": "string" },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "assigningAuthority",
+            "schema": { "type": "string" },
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consultation retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "consultation": {
+                      "$ref": "#/components/schemas/Consultation"
+                    },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/op/consultation/getQueueCount": {
+      "get": {
+        "tags": ["Consultation"],
+        "summary": "Get queue count for doctors",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fromDate",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "in": "query",
+            "name": "toDate",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "in": "query",
+            "name": "doctorId",
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "externalDoctorId",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Queue data returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "description": "List of queue status breakdowns per doctor",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "doctor": {
+                        "$ref": "#/components/schemas/Doctor"
+                      },
+                      "queue": {
+                        "type": "object",
+                        "properties": {
+                          "total": {
+                            "type": "integer",
+                            "description": "Total number of consultations + appointments"
+                          },
+                          "paid": {
+                            "type": "integer",
+                            "description": "Number of paid consultations"
+                          },
+                          "unpaid": {
+                            "type": "integer",
+                            "description": "Number of unpaid consultations or appointments"
+                          },
+                          "booked": {
+                            "type": "integer",
+                            "description": "Number of booked but not yet checked-in/completed"
+                          },
+                          "checkedIn": {
+                            "type": "integer",
+                            "description": "Number of patients currently checked in"
+                          },
+                          "completed": {
+                            "type": "integer",
+                            "description": "Number of consultations marked completed"
+                          },
+                          "noShow": {
+                            "type": "integer",
+                            "description": "Number of no-show cases"
+                          }
+                        },
+                        "required": [
+                          "total",
+                          "paid",
+                          "unpaid",
+                          "booked",
+                          "checkedIn",
+                          "completed",
+                          "noShow"
+                        ]
+                      }
+                    },
+                    "required": ["doctor", "queue"]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required doctor identifier"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/op/consultation/notifyPatient": {
+      "post": {
+        "tags": ["Consultation"],
+        "summary": "Trigger patient reminder message",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consultationId": { "type": "string" }
+                },
+                "required": ["consultationId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reminder triggered"
+          },
+          "400": {
+            "description": "Missing consultationId"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/op/consultation/uploadPrescription": {
+      "post": {
+        "tags": ["Consultation"],
+        "summary": "Upload prescription to a consultation",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consultationId": { "type": "string" },
+                  "prescriptionUrl": { "type": "string", "format": "uri" },
+                  "metaData": { "type": "object" }
+                },
+                "required": ["consultationId", "prescriptionUrl"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Prescription uploaded and patient notified"
+          },
+          "500": {
+            "description": "Error uploading prescription"
+          }
+        }
+      }
+    },
+    "/op/consultation/pendingintegration": {
+      "get": {
+        "tags": ["Consultation"],
+        "summary": "Get consultations with pending integration status",
+        "description": "Returns a list of consultations that have `integrationStatus` set to 'PENDING'. You can optionally filter by `fromDate` and `toDate` on the scheduledAt field.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "fromDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "description": "Start date to filter consultations"
+          },
+          {
+            "in": "query",
+            "name": "toDate",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "description": "End date to filter consultations"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of pending consultations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "consultations": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Consultation"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "description": "Total number of consultations fetched (before filtering by status)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/snapdocs/consultation/submit-note": {
+      "post": {
+        "tags": ["SnapDocs"],
+        "summary": "Submit Consultation Note",
+        "operationId": "submitConsultationNote",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "consultationId": { "type": "string", "example": "some id" },
+                  "doctorId": { "type": "string", "example": "some id" },
+                  "patientId": { "type": "string", "example": "some id" },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "summary": { "type": "string" },
+                      "subjective": {
+                        "type": "object",
+                        "properties": {
+                          "chief_complaint": { "type": "string" },
+                          "history_of_present_illness": { "type": "string" },
+                          "medical_history": { "type": "string" },
+                          "allergies": { "type": "string" },
+                          "immunizations": { "type": "string" },
+                          "review_of_systems": { "type": "string" },
+                          "present_illness": { "type": "string" },
+                          "patient_reported_symptoms": { "type": "string" },
+                          "surgical_history": { "type": "string" },
+                          "current_medications": { "type": "string" },
+                          "family_history": { "type": "string" },
+                          "social_history": { "type": "string" },
+                          "functional_status": { "type": "string" },
+                          "health_goals": { "type": "string" }
+                        }
+                      },
+                      "objective": {
+                        "type": "object",
+                        "properties": {
+                          "vital_signs": { "type": "string" },
+                          "physical_examination": { "type": "string" },
+                          "diagnostic_test_results": { "type": "string" },
+                          "other_findings": { "type": "string" },
+                          "general_appearance": { "type": "string" },
+                          "neurological": { "type": "string" },
+                          "imaging_results": { "type": "string" },
+                          "procedures_done_during_visit": { "type": "string" },
+                          "device_readings": { "type": "string" },
+                          "specialist_reports": { "type": "string" }
+                        }
+                      },
+                      "assessment_plan": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "problem": { "type": "string" },
+                            "assessment": { "type": "string" },
+                            "plan": { "type": "string" }
+                          }
+                        }
+                      },
+                      "icd_codes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "problem": { "type": "string" },
+                            "code": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": ["consultationId", "doctorId", "patientId", "data"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": {
+                      "type": "string",
+                      "example": "Note saved successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CampScreening": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "updatedBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "type": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "otherInfo": {
+            "type": "object"
+          },
+          "useManualStatus": {
+            "type": "boolean",
+            "default": false
+          },
+          "fromCSV": {
+            "type": "boolean"
+          },
+          "campId": {
+            "type": "string"
+          },
+          "patientId": {
+            "type": "string"
+          },
+          "oldPatientId": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isBulkScreening": {
+            "type": "boolean"
+          },
+          "issueCount": {
+            "type": "integer",
+            "default": 0
+          },
+          "bulkScreeningId": {
+            "type": "string"
+          },
+          "formsDetails": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "formId": {
+                  "type": "string"
+                },
+                "results": {
+                  "type": "object"
+                },
+                "scores": {
+                  "type": "object"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "totalScore": {
+                  "type": "integer"
+                },
+                "useManualStatus": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "previousFollowupScreeningId": {
+            "type": "string"
+          },
+          "previousScreeningId": {
+            "type": "string"
+          },
+          "isResolved": {
+            "type": "boolean",
+            "default": false
+          },
+          "resolvingReason": {
+            "type": "string"
+          },
+          "isReassist": {
+            "type": "boolean",
+            "default": false
+          },
+          "resolvedBy": {
+            "type": "string"
+          },
+          "resolvedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fromExternalRegistration": {
+            "type": "boolean"
+          },
+          "labItem": {
+            "type": "string"
+          },
+          "screeningNumber": {
+            "type": "integer"
+          },
+          "screeningDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isCleared": {
+            "type": "boolean",
+            "default": false
+          },
+          "scheduledBy": {
+            "type": "string"
+          },
+          "notSubmitted": {
+            "type": "boolean",
+            "default": false
+          },
+          "calls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Camp": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "type": {
+            "type": "string",
+            "required": true
+          },
+          "externalCampId": {
+            "type": "string"
+          },
+          "subDivision": {
+            "type": "string"
+          },
+          "villagePinCode": {
+            "type": "string",
+            "required": true
+          },
+          "villageName": {
+            "type": "string",
+            "required": true
+          },
+          "stateName": {
+            "type": "string"
+          },
+          "campDescription": {
+            "type": "string"
+          },
+          "expectedReportNumber": {
+            "type": "integer",
+            "default": 0
+          },
+          "numberOfConsolidatedReportGenerated": {
+            "type": "integer",
+            "default": 0
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "updatedBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "assigningAuthority": {
+            "type": "string"
+          },
+          "store": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "default": "Active"
+          },
+          "campStartDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "campEndDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "screeningStartDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "screeningStartTime": {
+            "type": "string"
+          },
+          "screeningEndDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "phc": {
+            "type": "string"
+          },
+          "talukaName": {
+            "type": "string"
+          },
+          "labourInspectorName": {
+            "type": "string"
+          },
+          "unionName": {
+            "type": "string"
+          },
+          "unionLeaderName": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "disableMessaging": {
+            "type": "boolean"
+          },
+          "numberScreeningsDone": {
+            "type": "integer",
+            "default": 0
+          },
+          "statusLog": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedBy": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "reportUrl": {
+            "type": "string"
+          },
+          "reportGeneratedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reportSentAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dicUsers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deoUsers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "driverUsers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "forms": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "patientConsumable": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "itemName": {
+                        "type": "string"
+                      },
+                      "itemId": {
+                        "type": "string"
+                      },
+                      "code": {
+                        "type": "string"
+                      },
+                      "quantity": {
+                        "type": "integer"
+                      },
+                      "batchNumber": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "userAccess": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemName": {
+                  "type": "string"
+                },
+                "itemId": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer"
+                },
+                "batchNumber": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "siteConsumable": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "itemName": {
+                  "type": "string"
+                },
+                "itemId": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer"
+                },
+                "batchNumber": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "extraDetails": {
+            "type": "object",
+            "properties": {
+              "labParameters": {
+                "type": "object"
+              },
+              "labItem": {
+                "type": "string"
+              },
+              "matchingDetail": {
+                "type": "object"
+              },
+              "isAdvanceFormSelection": {
+                "type": "boolean"
+              }
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Lead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "callFrom": {
+            "type": "string"
+          },
+          "callType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "assigningAuthority": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "patientId": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string"
+          },
+          "lastScheduledArray": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "lastScheduled": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "note": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "createdBy": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "lastConsultation": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "gender": {
+                "type": "string"
+              },
+              "pname": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "age": {
+                "type": "integer"
+              },
+              "pincode": {
+                "type": "integer"
+              },
+              "uhid": {
+                "type": "string"
+              },
+              "symptoms": {
+                "type": "string"
+              },
+              "doctor": {
+                "type": "string"
+              },
+              "consultationType": {
+                "type": "string"
+              },
+              "department": {
+                "type": "string"
+              },
+              "speciality": {
+                "type": "string"
+              },
+              "reports": {
+                "type": "string"
+              }
+            }
+          },
+          "referralData": {
+            "type": "object",
+            "properties": {
+              "contact": {
+                "type": "string"
+              },
+              "pname": {
+                "type": "string"
+              },
+              "age": {
+                "type": "integer"
+              },
+              "pincode": {
+                "type": "integer"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "createdBy": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "userType": {
+                    "type": "string"
+                  }
+                }
+              },
+              "billId": {
+                "type": "string"
+              },
+              "referredBy": {
+                "type": "string"
+              },
+              "uhid": {
+                "type": "string"
+              },
+              "referralDoctor": {
+                "type": "string"
+              },
+              "department": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              },
+              "serviceType": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "reports": {
+                "type": "string"
+              },
+              "condition": {
+                "type": "string"
+              },
+              "symptoms": {
+                "type": "string"
+              },
+              "gender": {
+                "type": "string"
+              },
+              "suggestedInvestigations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "gst": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "isCompleted": {
+                "type": "boolean",
+                "default": false
+              }
+            }
+          },
+          "isCleared": {
+            "type": "boolean",
+            "default": false
+          },
+          "followUpData": {
+            "type": "object",
+            "properties": {
+              "isAssigned": {
+                "type": "boolean",
+                "default": false
+              },
+              "assignments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "dueDate": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "assignedTo": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "userId": {
+                          "type": "string"
+                        },
+                        "userType": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "reasonForClearing": {
+            "type": "string"
+          },
+          "screeningId": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "userId": {
+                "type": "string"
+              },
+              "userType": {
+                "type": "string"
+              }
+            }
+          },
+          "isResolved": {
+            "type": "boolean",
+            "default": false
+          },
+          "resolvedBy": {
+            "type": "string"
+          },
+          "resolvingReason": {
+            "type": "string"
+          },
+          "calls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User's full name"
+          },
+          "userId": {
+            "type": "string",
+            "description": "Unique User ID"
+          },
+          "userType": {
+            "type": "string",
+            "description": "User role or type"
+          }
+        },
+        "required": ["name", "userId", "userType"]
+      },
+      "Patient": {
+        "required": ["dob", "fName", "gender", "mobile"],
+        "type": "object",
+        "properties": {
+          "fName": {
+            "type": "string"
+          },
+          "lName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "secondaryMobile": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "permanentAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "temporaryAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "household": {
+            "$ref": "#/components/schemas/Patient_household"
+          },
+          "employmentStatus": {
+            "type": "string"
+          },
+          "kyc": {
+            "$ref": "#/components/schemas/Patient_kyc"
+          },
+          "insurance": {
+            "$ref": "#/components/schemas/Patient_insurance"
+          },
+          "careGiver": {
+            "$ref": "#/components/schemas/Patient_careGiver"
+          },
+          "otherFieldValues": {
+            "$ref": "#/components/schemas/Patient_otherFieldValues"
+          },
+          "assigningAuthority": {
+            "$ref": "#/components/schemas/Patient_assigningAuthority"
+          },
+          "history": {
+            "type": "string"
+          },
+          "familyHistory": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "updatedBy": {
+            "type": "string"
+          },
+          "updatedOn": {
+            "type": "string"
+          },
+          "partnerOrganization": {
+            "type": "string"
+          },
+          "uhid": {
+            "type": "string",
+            "description": "Identifies a patient uniquely"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "organisationName": {
+            "type": "string"
+          },
+          "isVip": {
+            "type": "string"
+          },
+          "deathDate": {
+            "type": "string"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "partnerOrganisation": {
+            "type": "string"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "walletAmount": {
+            "type": "number"
+          },
+          "ipdType": {
+            "type": "string"
+          },
+          "activityReviews": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "clinicalTags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "balance": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "externalUhid": {
+            "type": "string",
+            "description": "Identifies a patient from other platform"
+          },
+          "kycFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "historyFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workingDiagnosis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allergies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vaccines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vaccines"
+            }
+          }
+        }
+      },
+      "Vaccines": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "doseNo": {
+            "type": "string"
+          },
+          "prevents": {
+            "type": "string"
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "givenOn": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer"
+          },
+          "doseAdministered": {
+            "type": "string"
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "lotNo": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_assigningAuthority": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "_id": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "updatePatient": {
+        "required": ["patientId"],
+        "type": "object",
+        "properties": {
+          "fName": {
+            "type": "string"
+          },
+          "lName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "maritalStatus": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "secondaryMobile": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "permanentAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "temporaryAddress": {
+            "$ref": "#/components/schemas/Patient_permanentAddress"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "household": {
+            "$ref": "#/components/schemas/Patient_household"
+          },
+          "employmentStatus": {
+            "type": "string"
+          },
+          "kyc": {
+            "$ref": "#/components/schemas/Patient_kyc"
+          },
+          "insurance": {
+            "$ref": "#/components/schemas/Patient_insurance"
+          },
+          "careGiver": {
+            "$ref": "#/components/schemas/Patient_careGiver"
+          },
+          "otherFieldValues": {
+            "$ref": "#/components/schemas/Patient_otherFieldValues"
+          },
+          "assigningAuthority": {
+            "$ref": "#/components/schemas/Patient_assigningAuthority"
+          },
+          "history": {
+            "type": "string"
+          },
+          "familyHistory": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string"
+          },
+          "updatedBy": {
+            "type": "string"
+          },
+          "updatedOn": {
+            "type": "string"
+          },
+          "partnerOrganization": {
+            "type": "string"
+          },
+          "uhid": {
+            "type": "string",
+            "description": "Identifies a patient uniquely"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "organisationName": {
+            "type": "string"
+          },
+          "isVip": {
+            "type": "string"
+          },
+          "deathDate": {
+            "type": "string"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "partnerOrganisation": {
+            "type": "string"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "walletAmount": {
+            "type": "number"
+          },
+          "ipdType": {
+            "type": "string"
+          },
+          "activityReviews": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "clinicalTags": {
+            "type": "object",
+            "description": "Should be Stringified JSON"
+          },
+          "balance": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "externalUhid": {
+            "type": "string",
+            "description": "Identifies a patient from other platform"
+          },
+          "kycFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "historyFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workingDiagnosis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allergies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vaccines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vaccines"
+            }
+          }
+        },
+        "xml": {
+          "name": "Patient"
+        }
+      },
+      "list": {
+        "type": "object",
+        "properties": {
+          "doctors": {
+            "type": "array",
+            "description": "array containin objects of type doctor.",
+            "items": {
+              "$ref": "#/components/schemas/doctorItem"
+            }
+          },
+          "totalCount": {
+            "type": "number",
+            "description": "total number of records"
+          }
+        }
+      },
+      "AssigningAuthority": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Assigning authority ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Location name"
+          },
+          "code": {
+            "type": "string",
+            "description": "Location code"
+          },
+          "location": {
+            "type": "string",
+            "description": "Location address or label"
+          }
+        }
+      },
+      "AssigningAuthorityList": {
+        "type": "object",
+        "properties": {
+          "sites": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssigningAuthority"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total number of locations"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Page size"
+          },
+          "pageNo": {
+            "type": "integer",
+            "description": "Page number"
+          }
+        }
+      },
+      "getDetails": {
+        "type": "object",
+        "properties": {
+          "patients": {
+            "type": "array",
+            "description": "array containin objects of type patient.",
+            "items": {
+              "patient": {
+                "permanentAddress": {
+                  "street": "",
+                  "zip": "123456",
+                  "city": "Demo",
+                  "state": "Demo"
+                },
+                "kycFiles": [],
+                "historyFiles": [],
+                "workingDiagnosis": [],
+                "allergies": [],
+                "balance": 0,
+                "oldPatientId": [],
+                "mergedFields": [],
+                "disablePatient": false,
+                "activityReviews": [],
+                "tags": [],
+                "clinicalTags": [],
+                "registeredAuthorities": "Demo_123",
+                "initialRegisteredAuthorities": [],
+                "_id": "Demo_567",
+                "fName": "Demo",
+                "lName": "Demo",
+                "gender": "Male",
+                "dob": "2001-09-07T10:23:59.010Z",
+                "maritalStatus": "Single",
+                "fatherName": "Demo",
+                "mobile": "1234567890",
+                "countryMobileCode": "91",
+                "secondaryMobileCode": "",
+                "assigningAuthority": {
+                  "_id": "Demo_123",
+                  "name": "Demo Hospital",
+                  "nationality": "Indian",
+                  "uhid": "MH-123",
+                  "createdBy": "Demo",
+                  "createdOn": "2022-12-07T10:23:59.378Z",
+                  "vaccines": [],
+                  "externalIds": [],
+                  "createdAt": "2022-12-07T10:23:59.454Z",
+                  "updatedAt": "2022-12-07T10:28:04.761Z",
+                  "fullName": "Demo",
+                  "isRegistrationDone": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "uploadPatientFile": {
+        "type": "object",
+        "required": ["patient_files", "reportType", "patientId", "date"],
+        "properties": {
+          "patient_files": {
+            "type": "string",
+            "description": "input stream of the file",
+            "format": "binary"
+          },
+          "reportType": {
+            "type": "string",
+            "description": ""
+          },
+          "patientId": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "date": {
+            "type": "string",
+            "format": "Date ISO String",
+            "example": "2021-12-26T11:10:10.010Z"
+          }
+        }
+      },
+      "doctorItem": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "name": {
+            "type": "string",
+            "example": "Anmol Malik"
+          },
+          "department": {
+            "type": "string",
+            "example": "Dermatology"
+          },
+          "unit": {
+            "type": "string",
+            "example": "Cardio"
+          },
+          "qualification": {
+            "type": "string",
+            "example": "MBBS"
+          },
+          "joiningDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "profileUrl": {
+            "type": "string",
+            "format": "url",
+            "example": "https://res.cloudinary.com/teleopdassets/image/upload/v1598816391/Meta_hOS_logo_updated_zghy8q.png"
+          },
+          "mobile": {
+            "type": "number",
+            "example": 1111111111
+          },
+          "registration": {
+            "type": "string",
+            "example": "9909"
+          },
+          "email": {
+            "type": "string",
+            "example": "you@yourdomain.com"
+          },
+          "isVerified": {
+            "type": "boolean",
+            "description": "Is doctor verified or not"
+          },
+          "consultationFee": {
+            "type": "number",
+            "example": 500
+          },
+          "followupConsultations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/followupConsultation"
+            }
+          },
+          "assigningAuthority": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "speciality": {
+            "type": "string"
+          },
+          "monthlyCtc": {
+            "type": "number"
+          }
+        }
+      },
+      "followupConsultation": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "60e83e0993ef331b406c0a3f"
+          },
+          "numberOfDays": {
+            "type": "number",
+            "example": 1
+          },
+          "fee": {
+            "type": "number",
+            "example": 500
+          }
+        }
+      },
+      "Doctor": {
+        "required": [
+          "department",
+          "email",
+          "mobile",
+          "name",
+          "qualification",
+          "registrationNo"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "joiningDate": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "number"
+          },
+          "registration": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "profileImg": {
+            "type": "string",
+            "description": "input stream of the file",
+            "format": "binary"
+          },
+          "isVerified": {
+            "type": "number"
+          },
+          "consultationFee": {
+            "type": "number"
+          },
+          "followupConsultations": {
+            "type": "array",
+            "description": "List of FollowUp Consultations",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_followupConsultations"
+            }
+          },
+          "assigningAuthority": {
+            "type": "string",
+            "format": "Object Id"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "externalUnitId": {
+            "type": "string"
+          },
+          "externalDepartmentId": {
+            "type": "string"
+          },
+          "monthlyCtc": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "name": "Demo-doctor",
+          "department": "Dermatology",
+          "unit": "test",
+          "qualification": "mbbs",
+          "joiningDate": "21-Dec-21",
+          "dob": "01-Jan-99",
+          "mobile": 1234547890,
+          "registration": "1",
+          "email": "sharan.j@m16labs.com",
+          "isVerified": true,
+          "consultationFee": 1,
+          "followupConsultations": [],
+          "assigningAuthority": "ObjectId(\"60b9bc21fa286c11b6314ec8\")",
+          "isReferred": false,
+          "address": "test",
+          "description": "Testing description",
+          "clinicName": "Demo",
+          "speciality": "Cardio",
+          "externalId": "123212",
+          "externalUnitId": "321123",
+          "externalDepartmentId": "Dept123",
+          "monthlyCtc": 100000
+        }
+      },
+      "updateDoctor": {
+        "required": ["doctorId"],
+        "type": "object",
+        "properties": {
+          "doctorId": {
+            "type": "string",
+            "format": "Object Id"
+          },
+          "name": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "joiningDate": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "number"
+          },
+          "registration": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "isVerified": {
+            "type": "number"
+          },
+          "consultationFee": {
+            "type": "number"
+          },
+          "followupConsultations": {
+            "type": "array",
+            "description": "List of FollowUp Consultations",
+            "items": {
+              "$ref": "#/components/schemas/Doctor_followupConsultations"
+            }
+          },
+          "assigningAuthority": {
+            "type": "string"
+          },
+          "isReferred": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "clinicName": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "externalUnitId": {
+            "type": "string"
+          },
+          "externalDepartmentId": {
+            "type": "string"
+          },
+          "monthlyCtc": {
+            "type": "string"
+          },
+          "profileUrl": {
+            "type": "string"
+          }
+        },
+        "example": {
+          "doctorId": "ObjectId(\"61c879b6abf75e188aed4f09\")",
+          "Name": "Demo-doctor-edited",
+          "Department": "Dermatology",
+          "Unit": "test-edited",
+          "Qualification": "mbbs",
+          "Description": "Testing description updated"
+        },
+        "xml": {
+          "name": "Doctor"
+        }
+      },
+      "getAvailableSlots": {
+        "required": ["forDate", "identifier", "type"],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "619f7dd4b74e9f43f2f389de"
+          },
+          "type": {
+            "type": "string",
+            "example": "Doctor"
+          },
+          "forDate": {
+            "type": "string",
+            "format": "Date ISO String",
+            "example": "2021-12-26T11:10:10.010Z"
+          },
+          "conId": {
+            "type": "string",
+            "format": "Object Id",
+            "example": "619f7dd4b74e9f43f2f389de"
+          },
+          "slotType": {
+            "type": "string",
+            "example": "slot"
+          }
+        }
+      },
+      "Patient_permanentAddress": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string"
+          },
+          "zip": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_household": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "string"
+          },
+          "income": {
+            "type": "string"
+          }
+        }
+      },
+      "Patient_kyc": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_insurance": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string"
+          },
+          "policyNo": {
+            "type": "string"
+          },
+          "effectivedate": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_careGiver": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Patient_otherFieldValues": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "object",
+            "description": "Can be any ObjectShould be Stringified JSON"
+          }
+        },
+        "description": "Should be Stringified JSON"
+      },
+      "Doctor_followupConsultations": {
+        "type": "object",
+        "properties": {
+          "numberOfDays": {
+            "type": "number"
+          },
+          "fee": {
+            "type": "number"
+          }
+        },
+        "description": "Stringified Json Object"
+      },
+      "Consultation": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "MongoDB ObjectId of the consultation"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the consultation (e.g., scheduled, completed, clear, unscheduled)"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Scheduled datetime of the consultation"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "description": "Datetime when consultation was marked completed"
+          },
+          "externalConsultationId": {
+            "type": "string",
+            "nullable": true,
+            "description": "External system's ID for the consultation"
+          },
+          "metaData": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Flexible metadata object"
+          },
+          "queue": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Current queue status (e.g., Checked In, Completed)"
+              },
+              "logs": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": { "type": "string" },
+                    "time": { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "patientId": {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" },
+              "fName": { "type": "string" },
+              "lName": { "type": "string" },
+              "dob": { "type": "string", "format": "date" },
+              "uhid": { "type": "string" },
+              "mobile": { "type": "string" },
+              "email": { "type": "string" },
+              "gender": { "type": "string" },
+              "maritalStatus": { "type": "string" },
+              "externalUhid": { "type": "string" },
+              "externalIds": { "type": "array", "items": { "type": "string" } },
+              "careGiver": { "type": "boolean" },
+              "nationality": { "type": "string" },
+              "profileUrl": { "type": "string" }
+            }
+          },
+          "doctorId": {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" },
+              "Name": { "type": "string" },
+              "Qualification": { "type": "string" },
+              "Registration": { "type": "string" },
+              "Unit": { "type": "string" },
+              "ProfileURL": { "type": "string" },
+              "languages": { "type": "array", "items": { "type": "string" } },
+              "Bio": { "type": "string" },
+              "doctorStatus": { "type": "string" },
+              "Department": { "type": "string" },
+              "externalId": { "type": "string" }
+            }
+          },
+          "billId": {
+            "type": "object"
+          },
+          "itemId": {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" },
+              "name": { "type": "string" }
+            }
+          },
+          "packageId": {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" },
+              "itemId": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" }
+                }
+              }
+            }
+          },
+          "roomId": {
+            "type": "object",
+            "nullable": true,
+            "description": "Room object"
+          },
+          "doctorEvent": {
+            "type": "object",
+            "nullable": true,
+            "description": "Calendar event for doctor"
+          },
+          "leadId": {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" },
+              "referralData": {
+                "type": "object",
+                "properties": {
+                  "referredBy": {
+                    "type": "object",
+                    "properties": {
+                      "Name": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "carePlanTriggeredId": {
+            "type": "object",
+            "properties": {
+              "carePlans": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "carePlanId": { "type": "object" }
+                  }
+                }
+              }
+            }
+          },
+          "secondOpinion": {
+            "type": "object",
+            "properties": {
+              "secondOpinionDoctorId": {
+                "type": "object",
+                "properties": {
+                  "Name": { "type": "string" }
+                }
+              }
+            }
+          },
+          "internallyReferredBy": {
+            "type": "object",
+            "properties": {
+              "Name": { "type": "string" }
+            }
+          },
+          "integrationStatus": {
+            "type": "string",
+            "description": "Integration status (e.g. PENDING)"
+          }
+        }
+      },
+      "BulkPatient": {
+        "type": "object",
+        "properties": {
+          "fName": { "type": "string" },
+          "lName": { "type": "string" },
+          "gender": { "type": "string" },
+          "dob": { "type": "string", "format": "date" },
+          "maritalStatus": { "type": "string" },
+          "bloodGroup": { "type": "string" },
+          "fatherName": { "type": "string" },
+          "motherName": { "type": "string" },
+          "mobile": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "permanentAddress": { "type": "object" },
+          "temporaryAddress": { "type": "object" },
+          "preferredLanguage": { "type": "string" },
+          "education": { "type": "string" },
+          "household": { "type": "object" },
+          "employmentStatus": { "type": "string" },
+          "kyc": { "type": "object" },
+          "insurance": { "type": "object" },
+          "careGiver": { "type": "object" },
+          "history": { "type": "object" },
+          "familyHistory": { "type": "object" },
+          "assigningAuthority": { "type": "string", "format": "ObjectId" },
+          "partnerOrganization": { "type": "string", "format": "ObjectId" },
+          "externalUhid": { "type": "string" },
+          "secondaryMobile": { "type": "string" },
+          "telephone": { "type": "string" },
+          "employeeId": { "type": "string" },
+          "otherFieldValues": { "type": "object" },
+          "externalRegistrationNumber": { "type": "string" },
+          "metaData": {
+            "type": "array",
+            "items": { "type": "object" }
+          },
+          "registeredAuthorities": {
+            "type": "array",
+            "items": { "type": "string", "format": "ObjectId" }
+          },
+          "externalIds": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "string" },
+                "systemRef": { "type": "string" }
+              },
+              "required": ["id"]
+            }
+          },
+          "nationality": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "createdOn": { "type": "number" },
+          "isRegistrationDone": { "type": "boolean" },
+          "registrationDate": { "type": "string", "format": "date-time" },
+          "mergeSimilar": { "type": "boolean" },
+          "mergeSimilarWithoutExternalId": { "type": "boolean" },
+          "noMessages": { "type": "boolean" },
+          "noWebhook": { "type": "boolean" }
+        },
+        "required": ["fName", "gender", "dob", "mobile"]
+      },
+      "PatientJourney": {
+        "type": "object",
+        "properties": {
+          "_id": { "type": "string", "format": "ObjectId" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CONSULTATION",
+              "APPOINTMENT",
+              "LEGACY_CONSULTATION",
+              "MERGE_PATIENT",
+              "REGISTRATION"
+            ]
+          },
+          "patientId": { "type": "string", "format": "ObjectId" },
+          "consultation": { "$ref": "#/components/schemas/Consultation" },
+          "appointmentId": { "type": "string", "format": "ObjectId" },
+          "description": { "type": "string" },
+          "hidden": { "type": "boolean" },
+          "onlyForCCDA": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "meta": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}
