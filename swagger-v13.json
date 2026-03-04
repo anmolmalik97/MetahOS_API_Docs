@@ -1464,7 +1464,7 @@
       }
     },
 
-    "/doctor/doctor-by-id": {
+    "/doctor": {
       "post": {
         "tags": ["Doctor"],
         "summary": "Fetch doctor details using doctorId",
