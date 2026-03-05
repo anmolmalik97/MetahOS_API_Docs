@@ -22,7 +22,7 @@
   },
   "servers": [
     {
-      "url": "baseUrl",
+      "url": "api/external/webhook",
       "description": "MetahOS APIs"
     }
   ],
@@ -286,18 +286,24 @@
     },
     "/doctor/list": {
       "get": {
-        "tags": ["Doctor"],
-        "summary": "Get a list of doctors",
-        "description": "Get a list of details of all doctors. Optional filters like name, department, pageNo, limit can be applied.",
-        "operationId": "list",
+        "tags": ["External Booking"],
+        "summary": "Select Doctor (by location)",
+        "description": "List doctors. Use assigningAuthority to filter by location.",
         "parameters": [
+          {
+            "name": "assigningAuthority",
+            "in": "query",
+            "description": "Location/Assigning Authority ID (Optional)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "name",
             "in": "query",
-            "description": "Doctor Name (Optional)",
+            "description": "Doctor name (Optional)",
             "required": false,
-            "style": "form",
-            "explode": true,
             "schema": {
               "type": "string"
             }
@@ -305,10 +311,8 @@
           {
             "name": "department",
             "in": "query",
-            "description": "Doctor Department (Optional)",
+            "description": "Doctor department (Optional)",
             "required": false,
-            "style": "form",
-            "explode": true,
             "schema": {
               "type": "string"
             }
@@ -316,52 +320,52 @@
           {
             "name": "pageNo",
             "in": "query",
-            "description": "Page Number (Optional)",
+            "description": "Page number (Optional)",
             "required": false,
-            "style": "form",
-            "explode": true,
             "schema": {
-              "minimum": 0,
               "type": "integer",
-              "format": "int32"
+              "minimum": 0
             }
           },
           {
             "name": "limit",
             "in": "query",
-            "description": "Maximum Limit (Optional)",
+            "description": "Maximum limit (Optional)",
             "required": false,
-            "style": "form",
-            "explode": true,
             "schema": {
-              "maximum": 100,
-              "minimum": 0,
               "type": "integer",
-              "format": "int32"
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "showActive",
+            "in": "query",
+            "description": "Show active or inactive doctors (Optional, true/false)",
+            "required": false,
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Object with all doctor details.",
+            "description": "List of doctors",
             "content": {
-              "multipart/form-data": {
+              "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/list"
-                  }
+                  "$ref": "#/components/schemas/list"
                 }
               }
             }
           },
           "500": {
-            "description": "internal server error"
+            "description": "Internal server error"
           }
         }
       }
     },
-    "/doctor/create": {
+    "/doctor/add": {
       "post": {
         "tags": ["Doctor"],
         "summary": "Create a new doctor",
@@ -526,14 +530,22 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
                     "ids": {
                       "type": "array",
-                      "items": { "type": "string", "format": "ObjectId" }
+                      "items": {
+                        "type": "string",
+                        "format": "ObjectId"
+                      }
                     },
                     "uhids": {
                       "type": "array",
-                      "items": { "type": "string" }
+                      "items": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -559,7 +571,6 @@
         }
       }
     },
-
     "/patient/list": {
       "get": {
         "summary": "Get paginated list of patients",
@@ -568,48 +579,73 @@
           {
             "name": "pageNo",
             "in": "query",
-            "schema": { "type": "integer", "default": 0 }
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
           },
           {
             "name": "limit",
             "in": "query",
-            "schema": { "type": "integer", "default": 10, "maximum": 100 }
+            "schema": {
+              "type": "integer",
+              "default": 10,
+              "maximum": 100
+            }
           },
           {
             "name": "search",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Text search on patient name, UHID, or mobile"
           },
           {
             "name": "fromDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" }
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           },
           {
             "name": "toDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" }
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           },
           {
             "name": "currentPatient",
             "in": "query",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "assigningAuthority",
             "in": "query",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "name": "noAuthorityFilter",
             "in": "query",
-            "schema": { "type": "boolean", "default": false }
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           },
           {
             "name": "allowPrtialSearch",
             "in": "query",
-            "schema": { "type": "boolean", "default": false }
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
@@ -622,9 +658,13 @@
                   "properties": {
                     "patients": {
                       "type": "array",
-                      "items": { "$ref": "#/components/schemas/Patient" }
+                      "items": {
+                        "$ref": "#/components/schemas/Patient"
+                      }
                     },
-                    "totalCount": { "type": "integer" }
+                    "totalCount": {
+                      "type": "integer"
+                    }
                   }
                 }
               }
@@ -637,8 +677,12 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": { "type": "string" },
-                    "message": { "type": "string" }
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -650,7 +694,6 @@
         }
       }
     },
-
     "/patient/journey/list": {
       "get": {
         "summary": "List journey entries for a patient",
@@ -660,17 +703,26 @@
             "name": "patientId",
             "in": "query",
             "required": true,
-            "schema": { "type": "string", "format": "ObjectId" }
+            "schema": {
+              "type": "string",
+              "format": "ObjectId"
+            }
           },
           {
             "name": "page",
             "in": "query",
-            "schema": { "type": "integer", "default": 1 }
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
           },
           {
             "name": "limit",
             "in": "query",
-            "schema": { "type": "integer", "default": 10 }
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
           },
           {
             "name": "type",
@@ -689,12 +741,18 @@
           {
             "name": "hidden",
             "in": "query",
-            "schema": { "type": "boolean", "default": true }
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
           },
           {
             "name": "forCCDA",
             "in": "query",
-            "schema": { "type": "boolean", "default": false }
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
           }
         ],
         "responses": {
@@ -711,10 +769,18 @@
                         "$ref": "#/components/schemas/PatientJourney"
                       }
                     },
-                    "totalDocs": { "type": "integer" },
-                    "totalPages": { "type": "integer" },
-                    "page": { "type": "integer" },
-                    "limit": { "type": "integer" }
+                    "totalDocs": {
+                      "type": "integer"
+                    },
+                    "totalPages": {
+                      "type": "integer"
+                    },
+                    "page": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    }
                   }
                 }
               }
@@ -771,14 +837,15 @@
         }
       }
     },
-    "/getAvailableSlots": {
+    "/calendar/getAvailableSlots": {
       "post": {
-        "tags": ["Slot"],
-        "summary": "Fetch available time slots of an entity (doctor, room, etc).",
-        "operationId": "getAvailableSlots",
+        "tags": ["External Booking"],
+        "summary": "Select Slot (Get Available Slots)",
+        "description": "Fetch available time slots for a doctor or resource.",
         "requestBody": {
+          "required": true,
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/getAvailableSlots"
               }
@@ -787,10 +854,34 @@
         },
         "responses": {
           "200": {
-            "description": "successfully fetched slots and returns list of slots"
+            "description": "Successfully fetched available slots",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "availableSlots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "availableSlots": [
+                    {
+                      "start": "2026-02-25T18:30:00.000Z",
+                      "end": "2026-02-25T18:45:00.000Z",
+                      "isOnlineSlot": true
+                    }
+                  ]
+                }
+              }
+            }
           },
           "500": {
-            "description": "internal server error"
+            "description": "Internal server error"
           }
         }
       }
@@ -799,14 +890,47 @@
       "get": {
         "tags": ["Patient"],
         "summary": "Get the details of a patient",
-        "description": "Get the details of patient matching the uhid provided.",
+        "description": "Get patient details by one of: patientId, externalPatientId, externalId, or uhid.",
         "operationId": "get",
         "parameters": [
+          {
+            "name": "patientId",
+            "in": "query",
+            "description": "Internal patient ObjectId",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "externalPatientId",
+            "in": "query",
+            "description": "External patient identifier (maps to externalUhid)",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "externalId",
+            "in": "query",
+            "description": "External ID from externalIds.id",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "uhid",
             "in": "query",
             "description": "Unique Health ID",
-            "required": true,
+            "required": false,
             "style": "form",
             "explode": true,
             "schema": {
@@ -834,11 +958,11 @@
         }
       }
     },
-    "/external/webhook/patient/getItemsForOnlineBooking": {
+    "/patient/getItemsForOnlineBooking": {
       "get": {
         "tags": ["External Booking"],
         "summary": "Get items for online booking (OPD/TELE)",
-        "description": "Returns OPD and TELE itemIds for a location. Use these itemIds in /external/webhook/op/consultation/create or /external/webhook/op/consultation/createWithSlot.",
+        "description": "Returns OPD and TELE itemIds for a location. Use these itemIds in /op/consultation/create or /op/consultation/createWithSlot.",
         "parameters": [
           {
             "name": "assigningAuthority",
@@ -862,22 +986,44 @@
                       "type": "object",
                       "description": "OPD item details",
                       "properties": {
-                        "_id": { "type": "string" },
-                        "name": { "type": "string" },
-                        "type": { "type": "string", "example": "OPD" },
-                        "price": { "type": "number" },
-                        "gst": { "type": "number" }
+                        "_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "OPD"
+                        },
+                        "price": {
+                          "type": "number"
+                        },
+                        "gst": {
+                          "type": "number"
+                        }
                       }
                     },
                     "teleItem": {
                       "type": "object",
                       "description": "TELE item details",
                       "properties": {
-                        "_id": { "type": "string" },
-                        "name": { "type": "string" },
-                        "type": { "type": "string", "example": "TELE" },
-                        "price": { "type": "number" },
-                        "gst": { "type": "number" }
+                        "_id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string",
+                          "example": "TELE"
+                        },
+                        "price": {
+                          "type": "number"
+                        },
+                        "gst": {
+                          "type": "number"
+                        }
                       }
                     }
                   }
@@ -913,7 +1059,289 @@
         }
       }
     },
-    "/external/webhook/assigningAuthority": {
+    "/patient/formsAndAssessments": {
+      "get": {
+        "tags": ["External Booking"],
+        "summary": "Get patient forms and assessment responses",
+        "description": "Fetch forms and responses for a patient. You can filter by consultationId. When only patient is provided, linked consultation (if any) is included in each response. Form fields are normalized and only include label, key and type.",
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "ObjectId"
+            },
+            "description": "Internal patient ID"
+          },
+          {
+            "name": "uhid",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Patient UHID"
+          },
+          {
+            "name": "externalPatientId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "External patient identifier"
+          },
+          {
+            "name": "consultationId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "ObjectId"
+            },
+            "description": "Optional consultation ID filter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Forms and responses fetched",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "patient": {
+                    "_id": "67f5f6eaf4f8e57f8b217002",
+                    "uhid": "UHID001"
+                  },
+                  "consultation": {
+                    "_id": "67f5f6eaf4f8e57f8b217001",
+                    "status": "scheduled"
+                  },
+                  "summary": {
+                    "formsCount": 1,
+                    "responsesCount": 1,
+                    "linkedConsultationsCount": 1
+                  },
+                  "formsAndAssessments": [
+                    {
+                      "form": {
+                        "_id": "67f5f6eaf4f8e57f8b2170aa",
+                        "name": "TGB Intake",
+                        "type": "assessment",
+                        "fields": [
+                          {
+                            "label": "Height",
+                            "key": "height",
+                            "type": "number"
+                          },
+                          {
+                            "label": "Symptoms",
+                            "key": "symptoms",
+                            "type": "text"
+                          }
+                        ]
+                      },
+                      "responseCount": 1
+                    }
+                  ],
+                  "responses": [
+                    {
+                      "_id": "67f5f6eaf4f8e57f8b2170bb",
+                      "formId": "67f5f6eaf4f8e57f8b2170aa",
+                      "entityId": "67f5f6eaf4f8e57f8b217001",
+                      "isSend": true,
+                      "consultation": {
+                        "_id": "67f5f6eaf4f8e57f8b217001"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Patient/Consultation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/patient/journey/files": {
+      "post": {
+        "tags": ["External Booking"],
+        "summary": "Add patient files to patient journey",
+        "description": "Save patient file URLs with metadata/date to PATIENT_FILES journey. files must be an array of valid http/https URLs (or pass a single valid URL in fileUrl).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "patientId": {
+                    "type": "string",
+                    "format": "ObjectId",
+                    "description": "Internal patient ID"
+                  },
+                  "uhid": {
+                    "type": "string",
+                    "description": "Patient UHID"
+                  },
+                  "externalPatientId": {
+                    "type": "string",
+                    "description": "External patient identifier"
+                  },
+                  "consultationId": {
+                    "type": "string",
+                    "format": "ObjectId",
+                    "description": "Optional consultation ID"
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "description": "Array of valid http/https file URLs"
+                  },
+                  "fileUrl": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "Single valid http/https file URL (alternative to files)"
+                  },
+                  "reportType": {
+                    "type": "string",
+                    "description": "Journey SubType",
+                    "example": "INVOICE"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Report/journey date-time"
+                  },
+                  "metaData": {
+                    "type": "object",
+                    "description": "Required metadata object"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "doctorName": {
+                    "type": "string"
+                  },
+                  "doctorLicenseNumber": {
+                    "type": "string"
+                  },
+                  "assigningAuthority": {
+                    "type": "string"
+                  }
+                },
+                "required": ["reportType", "date", "metaData"]
+              },
+              "example": {
+                "patientId": "67f5f6eaf4f8e57f8b217002",
+                "consultationId": "67f5f6eaf4f8e57f8b217001",
+                "files": ["https://cdn.example.com/reports/lab-123.pdf"],
+                "reportType": "LAB_REPORT",
+                "date": "2026-03-06T10:30:00.000Z",
+                "metaData": {
+                  "source": "external-webhook",
+                  "category": "lab"
+                },
+                "description": "Uploaded from external integration"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File journey created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "patientId": "67f5f6eaf4f8e57f8b217002",
+                  "consultationId": "67f5f6eaf4f8e57f8b217001",
+                  "filesCount": 1,
+                  "reportType": "LAB_REPORT",
+                  "date": "2026-03-06T10:30:00.000Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Invalid request for patient journey files",
+                  "errors": [
+                    {
+                      "field": "files",
+                      "code": "INVALID_TYPE",
+                      "message": "files must be an array of URL strings"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Patient/Consultation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assigningAuthority": {
       "get": {
         "tags": ["External Booking"],
         "summary": "Select Location (Assigning Authorities)",
@@ -994,137 +1422,7 @@
         }
       }
     },
-    "/external/webhook/doctor/list": {
-      "get": {
-        "tags": ["External Booking"],
-        "summary": "Select Doctor (by location)",
-        "description": "List doctors. Use assigningAuthority to filter by location.",
-        "parameters": [
-          {
-            "name": "assigningAuthority",
-            "in": "query",
-            "description": "Location/Assigning Authority ID (Optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "Doctor name (Optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "department",
-            "in": "query",
-            "description": "Doctor department (Optional)",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "pageNo",
-            "in": "query",
-            "description": "Page number (Optional)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 0
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "Maximum limit (Optional)",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100
-            }
-          },
-          {
-            "name": "showActive",
-            "in": "query",
-            "description": "Show active or inactive doctors (Optional, true/false)",
-            "required": false,
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of doctors",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/list"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/external/webhook/calendar/getAvailableSlots": {
-      "post": {
-        "tags": ["External Booking"],
-        "summary": "Select Slot (Get Available Slots)",
-        "description": "Fetch available time slots for a doctor or resource.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/getAvailableSlots"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successfully fetched available slots",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "availableSlots": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "availableSlots": [
-                    {
-                      "start": "2026-02-25T18:30:00.000Z",
-                      "end": "2026-02-25T18:45:00.000Z",
-                      "isOnlineSlot": true
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/external/webhook/op/consultation/create": {
+    "/op/consultation/create": {
       "post": {
         "summary": "Confirm Consultation Booking (no payment)",
         "description": "Creates a consultation with bill amount 0 for external integrations. Use external IDs to prevent duplicates.",
@@ -1193,24 +1491,51 @@
                     {
                       "type": "object",
                       "properties": {
-                        "success": { "type": "boolean", "example": true },
-                        "message": { "type": "string", "example": "Success!" },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Success!"
+                        },
                         "consultation": {
                           "type": "object",
                           "properties": {
-                            "_id": { "type": "string" },
-                            "department": { "type": "string" },
-                            "itemId": { "type": "string" },
-                            "mode": { "type": "string" },
+                            "_id": {
+                              "type": "string"
+                            },
+                            "department": {
+                              "type": "string"
+                            },
+                            "itemId": {
+                              "type": "string"
+                            },
+                            "mode": {
+                              "type": "string"
+                            },
                             "scheduledAt": {
                               "type": "string",
                               "format": "date-time"
                             },
-                            "patientId": { "type": "string" },
-                            "doctorId": { "type": "string" },
-                            "status": { "type": "string" },
-                            "vcRoom": { "type": ["string", "null"] },
-                            "billId": { "type": "string" }
+                            "patientId": {
+                              "type": "string"
+                            },
+                            "doctorId": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "vcRoom": {
+                              "type": ["string", "null"]
+                            },
+                            "billId": {
+                              "type": "string"
+                            },
+                            "billNumber": {
+                              "type": "string"
+                            }
                           }
                         }
                       }
@@ -1218,8 +1543,13 @@
                     {
                       "type": "object",
                       "properties": {
-                        "success": { "type": "boolean", "example": false },
-                        "message": { "type": "string" }
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "message": {
+                          "type": "string"
+                        }
                       }
                     }
                   ]
@@ -1232,25 +1562,39 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": { "type": "boolean", "example": false },
-                    "message": { "type": "string" }
-                  }
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Invalid request body for /create",
+                  "errors": [
+                    {
+                      "field": "itemId",
+                      "code": "REQUIRED_FIELD_MISSING",
+                      "message": "itemId is required"
+                    }
+                  ]
                 }
               }
             }
           },
           "500": {
-            "description": "Server error - unknown failure"
+            "description": "Server error - unknown failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/external/webhook/op/consultation/createWithSlot": {
+    "/op/consultation/createWithSlot": {
       "post": {
-        "summary": "Confirm Consultation Booking with slot (blocks calendar)",
-        "description": "Creates a consultation and blocks the selected slot on the doctor's calendar (no payment).",
+        "summary": "Create consultation with slot and bill",
+        "description": "Creates a consultation, blocks the doctor slot, and creates the bill. Use either `slot.start/slot.end` or `start/end`.",
         "tags": ["External Booking"],
         "requestBody": {
           "required": true,
@@ -1285,7 +1629,7 @@
                   },
                   "itemId": {
                     "type": "string",
-                    "description": "Service item ID for consultation"
+                    "description": "Service item ID for consultation. Item name is fetched from this item and used in bill/print."
                   },
                   "slot": {
                     "type": "object",
@@ -1328,9 +1672,98 @@
                   "skipValidityCheck": {
                     "type": "boolean",
                     "description": "Skip slot validity check"
+                  },
+                  "unitPrice": {
+                    "type": "number",
+                    "description": "Consultation unit price (required)",
+                    "example": 500
+                  },
+                  "isPaid": {
+                    "type": "boolean",
+                    "description": "Whether bill should be marked paid",
+                    "example": true
+                  },
+                  "paymentMode": {
+                    "type": "string",
+                    "description": "Payment mode when isPaid=true",
+                    "enum": [
+                      "cash",
+                      "card",
+                      "online",
+                      "upi",
+                      "cheque",
+                      "wallet",
+                      "advance"
+                    ],
+                    "example": "upi"
+                  },
+                  "paymentReference": {
+                    "type": "string",
+                    "description": "Transaction reference (UPI/Card/Online/Cheque)",
+                    "example": "UPI-12345"
+                  },
+                  "walletName": {
+                    "type": "string",
+                    "description": "Wallet label when paymentMode=wallet",
+                    "example": "External Wallet"
+                  },
+                  "chequeNumber": {
+                    "type": "string",
+                    "description": "Cheque number when paymentMode=cheque",
+                    "example": "000123"
+                  },
+                  "chequeDate": {
+                    "type": "string",
+                    "description": "Cheque date when paymentMode=cheque",
+                    "example": "2026-03-06"
+                  },
+                  "ifsc": {
+                    "type": "string",
+                    "description": "IFSC when paymentMode=cheque",
+                    "example": "SBIN0000001"
+                  },
+                  "paymentDate": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Optional payment timestamp"
+                  },
+                  "gst": {
+                    "type": "number",
+                    "description": "GST percentage",
+                    "example": 18
+                  },
+                  "discount": {
+                    "type": "number",
+                    "description": "Discount percentage applied to consultation",
+                    "example": 10
+                  },
+                  "billDiscountPercent": {
+                    "type": "number",
+                    "description": "Bill-level discount percentage on taxable-after-item-discount",
+                    "example": 5
+                  },
+                  "allowCombinedDiscounts": {
+                    "type": "boolean",
+                    "description": "Allow combining discount and billDiscountPercent",
+                    "example": false
+                  },
+                  "total": {
+                    "type": "number",
+                    "description": "Final consultation total after GST and discount (optional, validated if provided)",
+                    "example": 531
+                  },
+                  "quantity": {
+                    "type": "number",
+                    "description": "Quantity for bill line item (default 1)",
+                    "example": 1
+                  },
+                  "invoiceUrl": {
+                    "type": "string",
+                    "description": "Invoice URL to store in patient journey (PATIENT_FILES)",
+                    "example": "https://cdn.example.com/invoices/inv-001.pdf"
                   }
                 },
-                "required": ["itemId", "slot"]
+                "required": ["itemId", "unitPrice", "gst"]
               },
               "examples": {
                 "createWithSlot": {
@@ -1344,10 +1777,34 @@
                     "itemId": "ITEM001",
                     "type": "OPD",
                     "mode": "audio",
+                    "unitPrice": 500,
+                    "isPaid": true,
+                    "paymentMode": "upi",
+                    "paymentReference": "UPI-12345",
+                    "gst": 18,
+                    "discount": 10,
+                    "total": 531,
+                    "invoiceUrl": "https://cdn.example.com/invoices/inv-001.pdf",
                     "slot": {
                       "start": "2026-02-12T09:00:00.000Z",
                       "end": "2026-02-12T09:15:00.000Z"
                     }
+                  }
+                },
+                "createWithStartEnd": {
+                  "value": {
+                    "doctorId": "60d1f95b2e35c7001c7d6e12",
+                    "patientId": "60d1f95b2e35c7001c7d6e55",
+                    "itemId": "ITEM001",
+                    "type": "OPD",
+                    "mode": "audio",
+                    "start": "2026-02-12T09:00:00.000Z",
+                    "end": "2026-02-12T09:15:00.000Z",
+                    "unitPrice": 500,
+                    "isPaid": false,
+                    "gst": 18,
+                    "discount": 0,
+                    "total": 590
                   }
                 }
               }
@@ -1364,25 +1821,54 @@
                     {
                       "type": "object",
                       "properties": {
-                        "success": { "type": "boolean", "example": true },
-                        "message": { "type": "string", "example": "Success!" },
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Success!"
+                        },
                         "consultation": {
                           "type": "object",
                           "properties": {
-                            "_id": { "type": "string" },
-                            "department": { "type": "string" },
-                            "itemId": { "type": "string" },
-                            "mode": { "type": "string" },
+                            "_id": {
+                              "type": "string"
+                            },
+                            "department": {
+                              "type": "string"
+                            },
+                            "itemId": {
+                              "type": "string"
+                            },
+                            "mode": {
+                              "type": "string"
+                            },
                             "scheduledAt": {
                               "type": "string",
                               "format": "date-time"
                             },
-                            "patientId": { "type": "string" },
-                            "doctorId": { "type": "string" },
-                            "status": { "type": "string" },
-                            "vcRoom": { "type": ["string", "null"] },
-                            "billId": { "type": "string" },
-                            "doctorEvent": { "type": ["string", "null"] }
+                            "patientId": {
+                              "type": "string"
+                            },
+                            "doctorId": {
+                              "type": "string"
+                            },
+                            "status": {
+                              "type": "string"
+                            },
+                            "vcRoom": {
+                              "type": ["string", "null"]
+                            },
+                            "billId": {
+                              "type": "string"
+                            },
+                            "billNumber": {
+                              "type": "string"
+                            },
+                            "doctorEvent": {
+                              "type": ["string", "null"]
+                            }
                           }
                         }
                       }
@@ -1390,8 +1876,13 @@
                     {
                       "type": "object",
                       "properties": {
-                        "success": { "type": "boolean", "example": false },
-                        "message": { "type": "string" }
+                        "success": {
+                          "type": "boolean",
+                          "example": false
+                        },
+                        "message": {
+                          "type": "string"
+                        }
                       }
                     }
                   ]
@@ -1404,25 +1895,240 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": { "type": "boolean", "example": false },
-                    "message": { "type": "string" }
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "examples": {
+                  "invalidBody": {
+                    "value": {
+                      "success": false,
+                      "message": "Invalid request body for /createWithSlot",
+                      "errors": [
+                        {
+                          "field": "slot.end|end",
+                          "code": "REQUIRED_FIELD_MISSING",
+                          "message": "slot end is required (slot.end or end)"
+                        }
+                      ]
+                    }
+                  },
+                  "duplicateExternalConsultationId": {
+                    "value": {
+                      "success": false,
+                      "message": "Consultation already exists for externalConsultationId",
+                      "errors": [
+                        {
+                          "field": "externalConsultationId",
+                          "code": "DUPLICATE_EXTERNAL_CONSULTATION_ID",
+                          "message": "externalConsultationId must be unique",
+                          "value": "CONS-1001"
+                        }
+                      ],
+                      "existingConsultationId": "67f5f6eaf4f8e57f8b217001"
+                    }
                   }
                 }
               }
             }
           },
           "409": {
-            "description": "Slot not available"
+            "description": "Slot not available",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Slot not available for the selected doctor and time",
+                  "errors": [
+                    {
+                      "field": "slot",
+                      "code": "SLOT_NOT_AVAILABLE",
+                      "message": "Requested slot conflicts with an existing event or fails slot validity checks"
+                    }
+                  ],
+                  "slot": {
+                    "start": "2026-02-12T09:00:00.000Z",
+                    "end": "2026-02-12T09:15:00.000Z",
+                    "slotId": null,
+                    "skipValidityCheck": false
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Server error - unknown failure"
+            "description": "Server error - unknown failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unexpected internal server error"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/external/webhook/spandan/ecg-data": {
+    "/op/consultation/formsAndAssessments": {
+      "get": {
+        "summary": "Get consultation forms and responses",
+        "description": "Fetch sent forms/assessments and submitted responses for a consultation. Form fields are normalized and only include label, key and type.",
+        "tags": ["External Booking"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "consultationId",
+            "schema": {
+              "type": "string",
+              "format": "ObjectId"
+            },
+            "description": "Internal consultation ID"
+          },
+          {
+            "in": "query",
+            "name": "externalConsultationId",
+            "schema": {
+              "type": "string"
+            },
+            "description": "External consultation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Forms and responses retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "consultation": {
+                    "_id": "67f5f6eaf4f8e57f8b217001",
+                    "externalConsultationId": "CONS-1001",
+                    "patientId": "67f5f6eaf4f8e57f8b217002",
+                    "doctorId": "67f5f6eaf4f8e57f8b217003",
+                    "status": "scheduled",
+                    "scheduledAt": "2026-03-06T10:00:00.000Z",
+                    "sentForms": ["67f5f6eaf4f8e57f8b2170aa"],
+                    "forms": {}
+                  },
+                  "summary": {
+                    "sentFormsCount": 1,
+                    "formsCount": 1,
+                    "responsesCount": 1,
+                    "unresolvedSentFormsCount": 0,
+                    "orphanResponsesCount": 0
+                  },
+                  "formsAndAssessments": [
+                    {
+                      "form": {
+                        "_id": "67f5f6eaf4f8e57f8b2170aa",
+                        "name": "TGB Intake",
+                        "type": "assessment",
+                        "department": "General Medicine",
+                        "forPatientPreview": false,
+                        "disabled": false,
+                        "fields": [
+                          {
+                            "label": "Height",
+                            "key": "height",
+                            "type": "number"
+                          },
+                          {
+                            "label": "Symptoms",
+                            "key": "symptoms",
+                            "type": "text"
+                          }
+                        ]
+                      },
+                      "sentInConsultation": true,
+                      "responseCount": 1,
+                      "latestResponse": {
+                        "_id": "67f5f6eaf4f8e57f8b2170bb",
+                        "formId": "67f5f6eaf4f8e57f8b2170aa",
+                        "entityId": "67f5f6eaf4f8e57f8b217001",
+                        "type": "assessment",
+                        "isSend": true
+                      },
+                      "responses": []
+                    }
+                  ],
+                  "unresolvedSentForms": [],
+                  "orphanResponses": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid identifiers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Invalid request for formsAndAssessments",
+                  "errors": [
+                    {
+                      "field": "consultationId|externalConsultationId",
+                      "code": "MISSING_REQUIRED_IDENTIFIER",
+                      "message": "Provide consultationId or externalConsultationId to fetch forms and assessments"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Consultation not found",
+                  "errors": [
+                    {
+                      "field": "consultationId",
+                      "code": "CONSULTATION_NOT_FOUND",
+                      "message": "No consultation matched the provided consultation identifier",
+                      "value": "67f5f6eaf4f8e57f8b217001"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unable to fetch forms and assessments for consultation",
+                  "errors": [
+                    {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "Unexpected server error while fetching form responses"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/spandan/ecg-data": {
       "post": {
         "tags": ["Patient"],
         "summary": "Upload ECG Data",
@@ -1463,7 +2169,6 @@
         }
       }
     },
-
     "/doctor": {
       "post": {
         "tags": ["Doctor"],
@@ -1520,8 +2225,12 @@
               }
             }
           },
-          "404": { "description": "Doctor not found" },
-          "500": { "description": "Internal server error" }
+          "404": {
+            "description": "Doctor not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
         }
       }
     },
@@ -1588,142 +2297,11 @@
               }
             }
           },
-          "404": { "description": "Consultation not found" },
-          "500": { "description": "Internal server error" }
-        }
-      }
-    },
-    "/op/consultation/create": {
-      "post": {
-        "summary": "Create a new consultation",
-        "tags": ["Consultation"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "doctorId": {
-                    "type": "string",
-                    "description": "Internal doctor ID"
-                  },
-                  "externalDoctorId": {
-                    "type": "string",
-                    "description": "External doctor identifier"
-                  },
-                  "externalConsultationId": {
-                    "type": "string",
-                    "description": "External consultation identifier"
-                  },
-                  "externalPatientId": {
-                    "type": "string",
-                    "description": "External patient identifier"
-                  },
-                  "patientId": {
-                    "type": "string",
-                    "description": "Internal patient ID"
-                  },
-                  "uhid": {
-                    "type": "string",
-                    "description": "Unique hospital ID (UHID)"
-                  },
-                  "itemId": {
-                    "type": "string",
-                    "description": "Service item ID for consultation"
-                  }
-                },
-                "required": ["itemId"]
-              },
-              "examples": {
-                "createConsultation": {
-                  "value": {
-                    "doctorId": "60d1f95b2e35c7001c7d6e12",
-                    "externalDoctorId": "DOC123",
-                    "externalConsultationId": "CONSULT456",
-                    "externalPatientId": "EXTPT789",
-                    "patientId": "60d1f95b2e35c7001c7d6e55",
-                    "uhid": "UHID001",
-                    "itemId": "ITEM001"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Consultation created successfully or validation failure",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "success": { "type": "boolean", "example": true },
-                        "message": { "type": "string", "example": "Success!" },
-                        "consultation": {
-                          "type": "object",
-                          "properties": {
-                            "_id": { "type": "string" },
-                            "department": { "type": "string" },
-                            "itemId": { "type": "string" },
-                            "mode": { "type": "string" },
-                            "scheduledAt": {
-                              "type": "string",
-                              "format": "date-time"
-                            },
-                            "patientId": { "type": "string" },
-                            "doctorId": { "type": "string" },
-                            "status": { "type": "string" },
-                            "vcRoom": { "type": ["string", "null"] },
-                            "billId": { "type": "string" }
-                          }
-                        }
-                      }
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "success": { "type": "boolean", "example": false },
-                        "message": { "type": "string" }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Client error - patient or doctor not found, or duplicate consultation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": { "type": "boolean", "example": false },
-                    "message": { "type": "string" }
-                  }
-                }
-              }
-            }
+          "404": {
+            "description": "Consultation not found"
           },
           "500": {
-            "description": "Server error - unknown failure",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Unknown server error"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Internal server error"
           }
         }
       }
@@ -1774,7 +2352,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
                     "consultation": {
                       "type": "object",
                       "description": "Updated consultation object"
@@ -1784,18 +2365,65 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Invalid request for updateConsultation",
+                  "errors": [
+                    {
+                      "field": "consultationId",
+                      "code": "INVALID_OBJECT_ID",
+                      "message": "consultationId must be a valid ObjectId"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Consultation not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Consultation not found",
+                  "errors": [
+                    {
+                      "field": "consultationId",
+                      "code": "CONSULTATION_NOT_FOUND",
+                      "message": "No consultation matched the provided consultationId",
+                      "value": "60d1f95b2e35c7001c7d6e66"
+                    }
+                  ]
+                }
+              }
+            }
+          },
           "500": {
             "description": "Server error",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Something went wrong!"
+                  "$ref": "#/components/schemas/WebhookValidationError"
+                },
+                "example": {
+                  "success": false,
+                  "message": "Unable to update consultation",
+                  "errors": [
+                    {
+                      "code": "INTERNAL_SERVER_ERROR",
+                      "message": "Unexpected server error"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1811,169 +2439,232 @@
           {
             "name": "pageNo",
             "in": "query",
-            "schema": { "type": "integer" },
+            "schema": {
+              "type": "integer"
+            },
             "description": "Page number for pagination"
           },
           {
             "name": "limit",
             "in": "query",
-            "schema": { "type": "integer" },
+            "schema": {
+              "type": "integer"
+            },
             "description": "Number of results per page"
           },
           {
             "name": "doctorId",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Filter by doctor ID"
           },
           {
             "name": "department",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Filter by department"
           },
           {
             "name": "type",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Consultation type (scheduled, completed, etc.)"
           },
           {
             "name": "consultationType",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "OPD, TELE, or IPD"
           },
           {
             "name": "patientId",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Filter by patient ID"
           },
           {
             "name": "uhid",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Filter by UHID"
           },
           {
             "name": "fromDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" },
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
             "description": "Start date for filtering (ISO date)"
           },
           {
             "name": "toDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" },
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
             "description": "End date for filtering (ISO date)"
           },
           {
             "name": "billedFromDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" },
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
             "description": "Start date for billing filter"
           },
           {
             "name": "billedToDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" },
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
             "description": "End date for billing filter"
           },
           {
             "name": "whichdate",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Specifies which date field to filter on (fromDate/toDate/bothDate)"
           },
           {
             "name": "option",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Date field to apply filter (e.g., scheduledAt, createdAt)"
           },
           {
             "name": "sortKey",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Field to sort by"
           },
           {
             "name": "sortOrder",
             "in": "query",
-            "schema": { "type": "string", "enum": ["asc", "desc"] },
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            },
             "description": "Sort order"
           },
           {
             "name": "scheduledBy",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "User ID who scheduled the consultation"
           },
           {
             "name": "authority",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Assigning authority ID"
           },
           {
             "name": "search",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Search term for doctor, patient, or billNumber"
           },
           {
             "name": "todayOnly",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Date field to use when filtering only today's consultations"
           },
           {
             "name": "starttodayDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" },
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
             "description": "Start of today's date range"
           },
           {
             "name": "endtodayDate",
             "in": "query",
-            "schema": { "type": "string", "format": "date" },
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
             "description": "End of today's date range"
           },
           {
             "name": "currentStatusValue",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Current status of consultation from queue.label"
           },
           {
             "name": "ipd",
             "in": "query",
-            "schema": { "type": "boolean" },
+            "schema": {
+              "type": "boolean"
+            },
             "description": "If true, fetch IPD consultations only"
           },
           {
             "name": "handleCorporate",
             "in": "query",
-            "schema": { "type": "boolean" },
+            "schema": {
+              "type": "boolean"
+            },
             "description": "Filter based on corporate or cash consultation"
           },
           {
             "name": "corporateDocId",
             "in": "query",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "description": "Comma-separated corporate doctor IDs"
           },
           {
             "name": "forCSV",
             "in": "query",
-            "schema": { "type": "boolean" },
+            "schema": {
+              "type": "boolean"
+            },
             "description": "Trigger CSV export response"
           },
           {
             "name": "forPDF",
             "in": "query",
-            "schema": { "type": "boolean" },
+            "schema": {
+              "type": "boolean"
+            },
             "description": "Trigger PDF export response"
           }
         ],
@@ -2069,7 +2760,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
                     "files": {
                       "type": "array",
                       "items": {
@@ -2156,7 +2850,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true }
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
                   }
                 }
               }
@@ -2169,7 +2866,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": { "type": "string", "example": "bad request" }
+                    "error": {
+                      "type": "string",
+                      "example": "bad request"
+                    }
                   }
                 }
               }
@@ -2283,7 +2983,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true }
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    }
                   }
                 }
               }
@@ -2348,8 +3051,13 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true },
-                    "isAppointment": { "type": "boolean" },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "isAppointment": {
+                      "type": "boolean"
+                    },
                     "appointment": {
                       "type": "object",
                       "nullable": true
@@ -2370,7 +3078,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": false },
+                    "success": {
+                      "type": "boolean",
+                      "example": false
+                    },
                     "error": {
                       "type": "string",
                       "example": "Consultation/Appointment not found."
@@ -2407,13 +3118,17 @@
           {
             "in": "query",
             "name": "externalConsultationId",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "required": true
           },
           {
             "in": "query",
             "name": "assigningAuthority",
-            "schema": { "type": "string" },
+            "schema": {
+              "type": "string"
+            },
             "required": false
           }
         ],
@@ -2425,11 +3140,15 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean" },
+                    "success": {
+                      "type": "boolean"
+                    },
                     "consultation": {
                       "$ref": "#/components/schemas/Consultation"
                     },
-                    "message": { "type": "string" }
+                    "message": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -2449,22 +3168,32 @@
           {
             "in": "query",
             "name": "fromDate",
-            "schema": { "type": "string", "format": "date-time" }
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           },
           {
             "in": "query",
             "name": "toDate",
-            "schema": { "type": "string", "format": "date-time" }
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
           },
           {
             "in": "query",
             "name": "doctorId",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           },
           {
             "in": "query",
             "name": "externalDoctorId",
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -2550,7 +3279,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "consultationId": { "type": "string" }
+                  "consultationId": {
+                    "type": "string"
+                  }
                 },
                 "required": ["consultationId"]
               }
@@ -2581,9 +3312,16 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "consultationId": { "type": "string" },
-                  "prescriptionUrl": { "type": "string", "format": "uri" },
-                  "metaData": { "type": "object" }
+                  "consultationId": {
+                    "type": "string"
+                  },
+                  "prescriptionUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "metaData": {
+                    "type": "object"
+                  }
                 },
                 "required": ["consultationId", "prescriptionUrl"]
               }
@@ -2668,45 +3406,104 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "consultationId": { "type": "string", "example": "some id" },
-                  "doctorId": { "type": "string", "example": "some id" },
-                  "patientId": { "type": "string", "example": "some id" },
+                  "consultationId": {
+                    "type": "string",
+                    "example": "some id"
+                  },
+                  "doctorId": {
+                    "type": "string",
+                    "example": "some id"
+                  },
+                  "patientId": {
+                    "type": "string",
+                    "example": "some id"
+                  },
                   "data": {
                     "type": "object",
                     "properties": {
-                      "summary": { "type": "string" },
+                      "summary": {
+                        "type": "string"
+                      },
                       "subjective": {
                         "type": "object",
                         "properties": {
-                          "chief_complaint": { "type": "string" },
-                          "history_of_present_illness": { "type": "string" },
-                          "medical_history": { "type": "string" },
-                          "allergies": { "type": "string" },
-                          "immunizations": { "type": "string" },
-                          "review_of_systems": { "type": "string" },
-                          "present_illness": { "type": "string" },
-                          "patient_reported_symptoms": { "type": "string" },
-                          "surgical_history": { "type": "string" },
-                          "current_medications": { "type": "string" },
-                          "family_history": { "type": "string" },
-                          "social_history": { "type": "string" },
-                          "functional_status": { "type": "string" },
-                          "health_goals": { "type": "string" }
+                          "chief_complaint": {
+                            "type": "string"
+                          },
+                          "history_of_present_illness": {
+                            "type": "string"
+                          },
+                          "medical_history": {
+                            "type": "string"
+                          },
+                          "allergies": {
+                            "type": "string"
+                          },
+                          "immunizations": {
+                            "type": "string"
+                          },
+                          "review_of_systems": {
+                            "type": "string"
+                          },
+                          "present_illness": {
+                            "type": "string"
+                          },
+                          "patient_reported_symptoms": {
+                            "type": "string"
+                          },
+                          "surgical_history": {
+                            "type": "string"
+                          },
+                          "current_medications": {
+                            "type": "string"
+                          },
+                          "family_history": {
+                            "type": "string"
+                          },
+                          "social_history": {
+                            "type": "string"
+                          },
+                          "functional_status": {
+                            "type": "string"
+                          },
+                          "health_goals": {
+                            "type": "string"
+                          }
                         }
                       },
                       "objective": {
                         "type": "object",
                         "properties": {
-                          "vital_signs": { "type": "string" },
-                          "physical_examination": { "type": "string" },
-                          "diagnostic_test_results": { "type": "string" },
-                          "other_findings": { "type": "string" },
-                          "general_appearance": { "type": "string" },
-                          "neurological": { "type": "string" },
-                          "imaging_results": { "type": "string" },
-                          "procedures_done_during_visit": { "type": "string" },
-                          "device_readings": { "type": "string" },
-                          "specialist_reports": { "type": "string" }
+                          "vital_signs": {
+                            "type": "string"
+                          },
+                          "physical_examination": {
+                            "type": "string"
+                          },
+                          "diagnostic_test_results": {
+                            "type": "string"
+                          },
+                          "other_findings": {
+                            "type": "string"
+                          },
+                          "general_appearance": {
+                            "type": "string"
+                          },
+                          "neurological": {
+                            "type": "string"
+                          },
+                          "imaging_results": {
+                            "type": "string"
+                          },
+                          "procedures_done_during_visit": {
+                            "type": "string"
+                          },
+                          "device_readings": {
+                            "type": "string"
+                          },
+                          "specialist_reports": {
+                            "type": "string"
+                          }
                         }
                       },
                       "assessment_plan": {
@@ -2714,9 +3511,15 @@
                         "items": {
                           "type": "object",
                           "properties": {
-                            "problem": { "type": "string" },
-                            "assessment": { "type": "string" },
-                            "plan": { "type": "string" }
+                            "problem": {
+                              "type": "string"
+                            },
+                            "assessment": {
+                              "type": "string"
+                            },
+                            "plan": {
+                              "type": "string"
+                            }
                           }
                         }
                       },
@@ -2725,8 +3528,12 @@
                         "items": {
                           "type": "object",
                           "properties": {
-                            "problem": { "type": "string" },
-                            "code": { "type": "string" }
+                            "problem": {
+                              "type": "string"
+                            },
+                            "code": {
+                              "type": "string"
+                            }
                           }
                         }
                       }
@@ -2746,7 +3553,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": { "type": "boolean", "example": true },
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
                     "message": {
                       "type": "string",
                       "example": "Note saved successfully"
@@ -2768,6 +3578,39 @@
   },
   "components": {
     "schemas": {
+      "WebhookValidationErrorItem": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "value": {}
+        }
+      },
+      "WebhookValidationError": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookValidationErrorItem"
+            }
+          }
+        }
+      },
       "CampScreening": {
         "type": "object",
         "properties": {
@@ -4510,8 +5353,13 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "label": { "type": "string" },
-                    "time": { "type": "string", "format": "date-time" }
+                    "label": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
                   }
                 }
               }
@@ -4520,36 +5368,93 @@
           "patientId": {
             "type": "object",
             "properties": {
-              "_id": { "type": "string" },
-              "fName": { "type": "string" },
-              "lName": { "type": "string" },
-              "dob": { "type": "string", "format": "date" },
-              "uhid": { "type": "string" },
-              "mobile": { "type": "string" },
-              "email": { "type": "string" },
-              "gender": { "type": "string" },
-              "maritalStatus": { "type": "string" },
-              "externalUhid": { "type": "string" },
-              "externalIds": { "type": "array", "items": { "type": "string" } },
-              "careGiver": { "type": "boolean" },
-              "nationality": { "type": "string" },
-              "profileUrl": { "type": "string" }
+              "_id": {
+                "type": "string"
+              },
+              "fName": {
+                "type": "string"
+              },
+              "lName": {
+                "type": "string"
+              },
+              "dob": {
+                "type": "string",
+                "format": "date"
+              },
+              "uhid": {
+                "type": "string"
+              },
+              "mobile": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "gender": {
+                "type": "string"
+              },
+              "maritalStatus": {
+                "type": "string"
+              },
+              "externalUhid": {
+                "type": "string"
+              },
+              "externalIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "careGiver": {
+                "type": "boolean"
+              },
+              "nationality": {
+                "type": "string"
+              },
+              "profileUrl": {
+                "type": "string"
+              }
             }
           },
           "doctorId": {
             "type": "object",
             "properties": {
-              "_id": { "type": "string" },
-              "Name": { "type": "string" },
-              "Qualification": { "type": "string" },
-              "Registration": { "type": "string" },
-              "Unit": { "type": "string" },
-              "ProfileURL": { "type": "string" },
-              "languages": { "type": "array", "items": { "type": "string" } },
-              "Bio": { "type": "string" },
-              "doctorStatus": { "type": "string" },
-              "Department": { "type": "string" },
-              "externalId": { "type": "string" }
+              "_id": {
+                "type": "string"
+              },
+              "Name": {
+                "type": "string"
+              },
+              "Qualification": {
+                "type": "string"
+              },
+              "Registration": {
+                "type": "string"
+              },
+              "Unit": {
+                "type": "string"
+              },
+              "ProfileURL": {
+                "type": "string"
+              },
+              "languages": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "Bio": {
+                "type": "string"
+              },
+              "doctorStatus": {
+                "type": "string"
+              },
+              "Department": {
+                "type": "string"
+              },
+              "externalId": {
+                "type": "string"
+              }
             }
           },
           "billId": {
@@ -4558,18 +5463,26 @@
           "itemId": {
             "type": "object",
             "properties": {
-              "_id": { "type": "string" },
-              "name": { "type": "string" }
+              "_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
             }
           },
           "packageId": {
             "type": "object",
             "properties": {
-              "_id": { "type": "string" },
+              "_id": {
+                "type": "string"
+              },
               "itemId": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string" }
+                  "name": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -4587,14 +5500,18 @@
           "leadId": {
             "type": "object",
             "properties": {
-              "_id": { "type": "string" },
+              "_id": {
+                "type": "string"
+              },
               "referralData": {
                 "type": "object",
                 "properties": {
                   "referredBy": {
                     "type": "object",
                     "properties": {
-                      "Name": { "type": "string" }
+                      "Name": {
+                        "type": "string"
+                      }
                     }
                   }
                 }
@@ -4609,7 +5526,9 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "carePlanId": { "type": "object" }
+                    "carePlanId": {
+                      "type": "object"
+                    }
                   }
                 }
               }
@@ -4621,7 +5540,9 @@
               "secondOpinionDoctorId": {
                 "type": "object",
                 "properties": {
-                  "Name": { "type": "string" }
+                  "Name": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -4629,7 +5550,9 @@
           "internallyReferredBy": {
             "type": "object",
             "properties": {
-              "Name": { "type": "string" }
+              "Name": {
+                "type": "string"
+              }
             }
           },
           "integrationStatus": {
@@ -4641,70 +5564,164 @@
       "BulkPatient": {
         "type": "object",
         "properties": {
-          "fName": { "type": "string" },
-          "lName": { "type": "string" },
-          "gender": { "type": "string" },
-          "dob": { "type": "string", "format": "date" },
-          "maritalStatus": { "type": "string" },
-          "bloodGroup": { "type": "string" },
-          "fatherName": { "type": "string" },
-          "motherName": { "type": "string" },
-          "mobile": { "type": "string" },
-          "email": { "type": "string", "format": "email" },
-          "permanentAddress": { "type": "object" },
-          "temporaryAddress": { "type": "object" },
-          "preferredLanguage": { "type": "string" },
-          "education": { "type": "string" },
-          "household": { "type": "object" },
-          "employmentStatus": { "type": "string" },
-          "kyc": { "type": "object" },
-          "insurance": { "type": "object" },
-          "careGiver": { "type": "object" },
-          "history": { "type": "object" },
-          "familyHistory": { "type": "object" },
-          "assigningAuthority": { "type": "string", "format": "ObjectId" },
-          "partnerOrganization": { "type": "string", "format": "ObjectId" },
-          "externalUhid": { "type": "string" },
-          "secondaryMobile": { "type": "string" },
-          "telephone": { "type": "string" },
-          "employeeId": { "type": "string" },
-          "otherFieldValues": { "type": "object" },
-          "externalRegistrationNumber": { "type": "string" },
+          "fName": {
+            "type": "string"
+          },
+          "lName": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "maritalStatus": {
+            "type": "string"
+          },
+          "bloodGroup": {
+            "type": "string"
+          },
+          "fatherName": {
+            "type": "string"
+          },
+          "motherName": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "permanentAddress": {
+            "type": "object"
+          },
+          "temporaryAddress": {
+            "type": "object"
+          },
+          "preferredLanguage": {
+            "type": "string"
+          },
+          "education": {
+            "type": "string"
+          },
+          "household": {
+            "type": "object"
+          },
+          "employmentStatus": {
+            "type": "string"
+          },
+          "kyc": {
+            "type": "object"
+          },
+          "insurance": {
+            "type": "object"
+          },
+          "careGiver": {
+            "type": "object"
+          },
+          "history": {
+            "type": "object"
+          },
+          "familyHistory": {
+            "type": "object"
+          },
+          "assigningAuthority": {
+            "type": "string",
+            "format": "ObjectId"
+          },
+          "partnerOrganization": {
+            "type": "string",
+            "format": "ObjectId"
+          },
+          "externalUhid": {
+            "type": "string"
+          },
+          "secondaryMobile": {
+            "type": "string"
+          },
+          "telephone": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "otherFieldValues": {
+            "type": "object"
+          },
+          "externalRegistrationNumber": {
+            "type": "string"
+          },
           "metaData": {
             "type": "array",
-            "items": { "type": "object" }
+            "items": {
+              "type": "object"
+            }
           },
           "registeredAuthorities": {
             "type": "array",
-            "items": { "type": "string", "format": "ObjectId" }
+            "items": {
+              "type": "string",
+              "format": "ObjectId"
+            }
           },
           "externalIds": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "id": { "type": "string" },
-                "systemRef": { "type": "string" }
+                "id": {
+                  "type": "string"
+                },
+                "systemRef": {
+                  "type": "string"
+                }
               },
               "required": ["id"]
             }
           },
-          "nationality": { "type": "string" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "createdOn": { "type": "number" },
-          "isRegistrationDone": { "type": "boolean" },
-          "registrationDate": { "type": "string", "format": "date-time" },
-          "mergeSimilar": { "type": "boolean" },
-          "mergeSimilarWithoutExternalId": { "type": "boolean" },
-          "noMessages": { "type": "boolean" },
-          "noWebhook": { "type": "boolean" }
+          "nationality": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdOn": {
+            "type": "number"
+          },
+          "isRegistrationDone": {
+            "type": "boolean"
+          },
+          "registrationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "mergeSimilar": {
+            "type": "boolean"
+          },
+          "mergeSimilarWithoutExternalId": {
+            "type": "boolean"
+          },
+          "noMessages": {
+            "type": "boolean"
+          },
+          "noWebhook": {
+            "type": "boolean"
+          }
         },
         "required": ["fName", "gender", "dob", "mobile"]
       },
       "PatientJourney": {
         "type": "object",
         "properties": {
-          "_id": { "type": "string", "format": "ObjectId" },
+          "_id": {
+            "type": "string",
+            "format": "ObjectId"
+          },
           "type": {
             "type": "string",
             "enum": [
@@ -4715,14 +5732,34 @@
               "REGISTRATION"
             ]
           },
-          "patientId": { "type": "string", "format": "ObjectId" },
-          "consultation": { "$ref": "#/components/schemas/Consultation" },
-          "appointmentId": { "type": "string", "format": "ObjectId" },
-          "description": { "type": "string" },
-          "hidden": { "type": "boolean" },
-          "onlyForCCDA": { "type": "boolean" },
-          "createdAt": { "type": "string", "format": "date-time" },
-          "updatedAt": { "type": "string", "format": "date-time" },
+          "patientId": {
+            "type": "string",
+            "format": "ObjectId"
+          },
+          "consultation": {
+            "$ref": "#/components/schemas/Consultation"
+          },
+          "appointmentId": {
+            "type": "string",
+            "format": "ObjectId"
+          },
+          "description": {
+            "type": "string"
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "onlyForCCDA": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
           "meta": {
             "type": "object",
             "additionalProperties": true
